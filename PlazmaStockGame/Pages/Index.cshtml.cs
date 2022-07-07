@@ -7,6 +7,7 @@ namespace PlazmaStockGame.Pages
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
+        [BindProperty]
         public Stock stock { get; set; }
 
         public IndexModel(ILogger<IndexModel> logger)
@@ -17,6 +18,11 @@ namespace PlazmaStockGame.Pages
         public void OnGet()
         {
 
+        }
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid) { return Page(); }
+            return RedirectToPage("Game");
         }
     }
 

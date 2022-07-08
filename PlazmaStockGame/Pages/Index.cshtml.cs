@@ -7,8 +7,12 @@ namespace PlazmaStockGame.Pages
     public class IndexModel : PageModel
     {
         private readonly ILogger<IndexModel> _logger;
+
+        public const string SessionKeyTicker = "_Ticker";
+
         [BindProperty]
-        public Stock stock { get; set; }
+        [Required]
+        public string Ticker { get; set; }
 
         public IndexModel(ILogger<IndexModel> logger)
         {
@@ -22,13 +26,10 @@ namespace PlazmaStockGame.Pages
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid) { return Page(); }
+
+            HttpContext.Session.SetString(SessionKeyTicker, Ticker);
+
             return RedirectToPage("Game");
         }
-    }
-
-    public class Stock
-    {
-        [Required]
-        public string Indetifier { get; set; }
     }
 }

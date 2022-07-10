@@ -1,5 +1,52 @@
 ﻿@page
 @model PlazmaStockGame.Pages.GameModel
 @{
-    <label>Welcome to the Game your stock is: @Model.Ticker</label>
+    //var dataSet = new DataSet();
+    //dataSet.ReadXmlSchema(Server.MapPath("~/App_Data/data.xsd"));
+    //dataSet.ReadXml(Server.MapPath("~/App_Data/data.xml"));
+    //var dataView = new DataView(dataSet.Tables[0]);
+    //
+    //
+    //var myChart = new Chart(width: 600, height: 400)
+    //    .AddTitle("Sales Per Employee")
+    //    .AddSeries("Default", chartType: "Pie",
+    //        xValue: dataView, xField: "Name",
+    //        yValues: dataView, yFields: "Sales")
+    //    .Write();
+}
+
+
+
+
+
+<label>Welcome to the Game your stock is: @Model.Ticker</label>
+
+<div>
+    <p>Please enter an amount of stocks you want to buy:</p>
+    <input type="number" id="txtQuantity" name="txtQuantity" min="1" max="100" onchange="updateSlider(this.value)">
+</div>
+<br />
+
+<label for="myRange">Please select an amount of stocks you want to buy</label>
+<div class="slidecontainer">
+  <input type="range" min="1" max="100" value="50" class="slider" id="myRange" onchange="updateTextInput(this.value)">
+</div>
+
+
+
+
+
+
+
+@section Scripts
+{
+    <script>
+        function updateTextInput(val) {
+          document.getElementById('txtQuantity').value=val; 
+        }
+        function updateSlider(val) {
+          document.getElementById('myRange').value=val; 
+        }
+    </script>
+
 }

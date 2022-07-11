@@ -13,6 +13,7 @@
     //        xValue: dataView, xField: "Name",
     //        yValues: dataView, yFields: "Sales")
     //    .Write();
+
 }
 
 
@@ -20,6 +21,8 @@
 
 
 <label>Welcome to the Game your stock is: @Model.Ticker</label>
+
+<h2>Current Amount of money you have: @Model.CurrMoney</h2>
 
 <div>
     <p>Please enter an amount of stocks you want to buy:</p>
@@ -31,6 +34,21 @@
 <div class="slidecontainer">
   <input type="range" min="1" max="100" value="50" class="slider" id="myRange" onchange="updateTextInput(this.value)">
 </div>
+
+<br />
+
+<div>
+
+    <p id="CurrentDay">Here is the Current Day: @Model.CurrDate</p>
+    <div id="result">----</div>
+    @Html.AntiForgeryToken()
+    <button type="button" id="NextDay">Next Day</button>
+
+</div>
+
+@Html.AntiForgeryToken()
+<button type="button" id="invokeAjaxHello" >Run Hello</button>
+<div id="result">----</div>
 
 
 
@@ -47,6 +65,32 @@
         function updateSlider(val) {
           document.getElementById('myRange').value=val; 
         }
+
     </script>
+
+    
+    <script type="text/javascript">
+        
+
+        $("#NextDay").click(function() {
+            $.ajax({
+                type: "POST",
+                url: "/Game?handler=NextDay",
+                data:{"date": '@Model.CurrDate'},
+                contentType: 'application/x-www-form-urlencoded',
+                dataType: "json",
+                headers:
+                {
+                    "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function( message ) {
+                    document.getElementById("result").innerHTML = message;
+                }
+            });
+
+        });       
+    </script>
+
+
 
 }

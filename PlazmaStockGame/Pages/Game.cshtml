@@ -7,33 +7,26 @@
     <!--Load the AJAX API-->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-        // Load the Visualization API and the corechart package.
         google.charts.load('current', { 'packages': ['corechart'] });
-        // Set a callback to run when the Google Visualization API is loaded.
         google.charts.setOnLoadCallback(drawChart);
-        // Callback that creates and populates a data table,
-        // instantiates the pie chart, passes in the data and
-        // draws it.
+
         function drawChart() {
-            // Create the data table.
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Topping');
-            data.addColumn('number', 'Slices');
-            data.addRows([
-                ['Mushrooms', 3],
-                ['Onions', 1],
-                ['Olives', 1],
-                ['Zucchini', 1],
-                ['Pepperoni', 2]
+
+            var data = google.visualization.arrayToDataTable([
+                ['Stock Transaction', 'representation'],
+                ['Funds being used', 0],
+                ['Funds Remaining', 100],
             ]);
-            // Set chart options
+
             var options = {
-                'title': 'How Much Pizza I Ate Last Night',
-                'width': 400,
-                'height': 300
+                pieHole: 0.5,
+                pieSliceTextStyle: {
+                    color: 'black',
+                },
+                legend: 'none'
             };
-            // Instantiate and draw our chart, passing in some options.
-            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+
+            var chart = new google.visualization.PieChart(document.getElementById('donut_single'));
             chart.draw(data, options);
         }
     </script>
@@ -47,8 +40,8 @@
             padding: 24px;
             border-radius: 10px;
         }
-        .sidePanel{
-          
+
+        .sidePanel {
         }
     </style>
 </head>
@@ -73,7 +66,7 @@
             <div class="row mx-auto">
                 <label>Welcome to the Game your stock is: @Model.Ticker</label>
                 <!--Div that will hold the pie chart-->
-                <div id="chart_div"></div>
+                <div id="donut_single" style="width: 900px; height: 500px;"></div>
             </div>
             <div class="row mx-auto">
                 <p>Please enter an amount of stocks you want to buy:</p>
@@ -82,11 +75,12 @@
             <div class="row mx-auto">
                 <label for="myRange">Please select an amount of stocks you want to buy</label>
                 <div class="slidecontainer">
-                    <input type="range" min="1" max="100" value="50" class="slider" id="myRange" onchange="updateTextInput(this.value)">
+                    <input type="range" min="1" max="100" value="0" class="slider" id="myRange" onchange="updateTextInput(this.value)">
                 </div>
             </div>
             <div class="row mx-auto sidePanel">
                 <div class="col">
+                    <div id="result"></div>
                     @Html.AntiForgeryToken()
                     <button id="btnSubmit" class="btn btn-success w-50 mx-auto">Submit</button>
                 </div>
@@ -113,14 +107,35 @@
 
 @section Scripts
     {
-    <script>
+    <script type="text/javascript">
         function updateTextInput(val) {
-            document.getElementById('txtQuantity').value = val;
-        }
+            var purchase = @Model.CurrMoney * (val / 100);
+            document.getElementById('txtQuantity').value = purchase;
+            changeGraphValue(purchase);
+        };
         function updateSlider(val) {
-            document.getElementById('myRange').value = val;
-        }
+            var percent = (val / @Model.CurrMoney) * 100;
+            document.getElementById('myRange').value = percent;
+            changeGraphValue(val);
+        };
+        function changeGraphValue(purchase) {
+            remaining = @Model.CurrMoney - purchase;
+            var data = google.visualization.arrayToDataTable([
+                ['Stock Transaction', 'representation'],
+                ['Funds being used', purchase],
+                ['Funds Remaining', remaining],
+            ]);
 
+            var options = {
+                pieHole: 0.5,
+                pieSliceTextStyle: {
+                    color: 'black',
+                },
+                legend: 'none'
+            };
+            var chart = new google.visualization.PieChart(document.getElementById('donut_single'));
+            chart.draw(data, options);
+        };
     </script>
 
 

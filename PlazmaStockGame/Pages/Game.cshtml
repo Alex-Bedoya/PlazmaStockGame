@@ -1,43 +1,100 @@
 ﻿@page
 @model PlazmaStockGame.Pages.GameModel
 @{
-    //var dataSet = new DataSet();
-    //dataSet.ReadXmlSchema(Server.MapPath("~/App_Data/data.xsd"));
-    //dataSet.ReadXml(Server.MapPath("~/App_Data/data.xml"));
-    //var dataView = new DataView(dataSet.Tables[0]);
-    //
-    //
-    //var myChart = new Chart(width: 600, height: 400)
-    //    .AddTitle("Sales Per Employee")
-    //    .AddSeries("Default", chartType: "Pie",
-    //        xValue: dataView, xField: "Name",
-    //        yValues: dataView, yFields: "Sales")
-    //    .Write();
 
 }
+<head>
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        // Load the Visualization API and the corechart package.
+        google.charts.load('current', { 'packages': ['corechart'] });
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawChart);
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart() {
+            // Create the data table.
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Topping');
+            data.addColumn('number', 'Slices');
+            data.addRows([
+                ['Mushrooms', 3],
+                ['Onions', 1],
+                ['Olives', 1],
+                ['Zucchini', 1],
+                ['Pepperoni', 2]
+            ]);
+            // Set chart options
+            var options = {
+                'title': 'How Much Pizza I Ate Last Night',
+                'width': 400,
+                'height': 300
+            };
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+    </script>
+    <style>
+        .mainPanel {
+            box-shadow: 2px 2px 6px 4px lightgrey;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            min-width: 600px;
+            padding: 24px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
 
+<body>
+    <div class="container-fluid">
+        @*user pannel*@
+        <div class="col-3 float-start">
+            <div class="row">
+                <div class="col">
+                    <label>Welcome to the Game your stock is: @Model.Ticker</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h2>Current Amount of money you have: @Model.CurrMoney</h2>
+                </div>
+            </div>
+        </div>
+        <!--Buy more page-->
+        <div class="col-6 mx-auto mainPanel">
+            <div class="row mx-auto">
+                <label>Welcome to the Game your stock is: @Model.Ticker</label>
+                <!--Div that will hold the pie chart-->
+                <div id="chart_div"></div>
+            </div>
+            <div class="row mx-auto">
+                <p>Please enter an amount of stocks you want to buy:</p>
+                <input class="w-25" type="number" id="txtQuantity" name="txtQuantity" min="1" max="100" onchange="updateSlider(this.value)">
+            </div>
+            <div class="row mx-auto">
+                <label for="myRange">Please select an amount of stocks you want to buy</label>
+                <div class="slidecontainer">
+                    <input type="range" min="1" max="100" value="50" class="slider" id="myRange" onchange="updateTextInput(this.value)">
+                </div>
+            </div>
+            <div class="row mx-auto">
+                <div class="col">
+                    @Html.AntiForgeryToken()
+                    <button id="btnSubmit" class="btn btn-success w-50 mx-auto">Submit</button>
+                </div>
+            </div>
+        </div>
+        @*options panel*@
+        <div class="col-3 float-end"></div>
+    </div>
+</body>
 
-
-
-
-<label>Welcome to the Game your stock is: @Model.Ticker</label>
-
-<h2>Current Amount of money you have: @Model.CurrMoney</h2>
-
-<div>
-    <p>Please enter an amount of stocks you want to buy:</p>
-    <input type="number" id="txtQuantity" name="txtQuantity" min="1" max="100" onchange="updateSlider(this.value)">
-</div>
-<br />
-
-<label for="myRange">Please select an amount of stocks you want to buy</label>
-<div class="slidecontainer">
-  <input type="range" min="1" max="100" value="50" class="slider" id="myRange" onchange="updateTextInput(this.value)">
-</div>
-
-<br />
-
-<div>
+@*<div>
 
     <p id="CurrentDay">Here is the Current Day: @Model.CurrDate</p>
     <div id="result">----</div>
@@ -47,48 +104,63 @@
 </div>
 
 @Html.AntiForgeryToken()
-<button type="button" id="invokeAjaxHello" >Run Hello</button>
-<div id="result">----</div>
-
-
-
-
-
+<button type="button" id="invokeAjaxHello">Run Hello</button>
+<div id="result">----</div>*@
 
 
 @section Scripts
-{
+    {
     <script>
         function updateTextInput(val) {
-          document.getElementById('txtQuantity').value=val; 
+            document.getElementById('txtQuantity').value = val;
         }
         function updateSlider(val) {
-          document.getElementById('myRange').value=val; 
+            document.getElementById('myRange').value = val;
         }
 
     </script>
 
-    
+
     <script type="text/javascript">
-        
+
 
         $("#NextDay").click(function() {
             $.ajax({
                 type: "POST",
                 url: "/Game?handler=NextDay",
-                data:{"date": '@Model.CurrDate'},
+                data: { "date": '@Model.CurrDate' },
                 contentType: 'application/x-www-form-urlencoded',
                 dataType: "json",
                 headers:
                 {
                     "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
                 },
-                success: function( message ) {
+                success: function(message) {
                     document.getElementById("result").innerHTML = message;
                 }
             });
 
-        });       
+        });
+
+        $("#btnSubmit").click(function() {
+            //var amount = document.getElementById('txtQuantity').value;
+            // check witch radio button was clicked here and run a different ajax method for each one.
+            $.ajax({
+                type: "POST",
+                url: "/Game?handler=Purchase",
+                data: { "amount": 200 },
+                contentType: 'application/x-www-form-urlencoded',
+                dataType: "json",
+                headers:
+                {
+                    "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function(message) {
+                    document.getElementById("result").innerHTML = message;
+                }
+            });
+        });
+
     </script>
 
 

@@ -56,6 +56,10 @@ namespace PlazmaStockGame.Pages
             return new JsonResult(CurrDate);
         }
 
+        public IActionResult OnPostPurchase(int amount)
+        {
+            return new JsonResult("some stuff");
+        }
 
     }
 }

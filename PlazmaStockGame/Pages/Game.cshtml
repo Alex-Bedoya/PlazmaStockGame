@@ -1,5 +1,6 @@
 ﻿@page
 @model PlazmaStockGame.Pages.GameModel
+@using PlazmaStockGame.Models
 @{
 
 }
@@ -90,6 +91,25 @@
         <div class="col-3 float-end"></div>
     </div>
 </body>
+
+ <table>
+        <tr class="table-header">
+            <th>Ticker</th>
+            <th>Date</th>
+            <th>Cost</th>
+        </tr>
+
+@{foreach (Stock stck in Model.stocks)
+{
+     <tr class="table-header">
+            <th>@stck.Ticker</th>
+            <th>@stck.Date.ToString()</th>
+            <th>@stck.Cost</th>
+        </tr>
+    
+}
+}
+</table>
 
 @*<div>
 

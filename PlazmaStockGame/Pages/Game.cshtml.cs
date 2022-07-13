@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PlazmaStockGame.Models;
+using PlazmaStockGame.DataAccess;
 
 namespace PlazmaStockGame.Pages
 {
@@ -11,6 +13,7 @@ namespace PlazmaStockGame.Pages
 
         public DateTime CurrDate { get; set; }
 
+        public List<Stock> stocks { get; set; }
 
 
        
@@ -21,6 +24,7 @@ namespace PlazmaStockGame.Pages
             Ticker = HttpContext.Session.GetString("_Ticker");
             CurrDate = RandomDay();
             CurrMoney = 10000;
+            stocks = DbRepository.GetStocksAfterDate(Ticker, CurrDate);            
         }
 
 

@@ -20,7 +20,7 @@ namespace PlazmaStockGame.DataAccess
             {
                 using (StockDbContext db = new StockDbContext())
                 {
-                    stocks = db.Stocks.Where(q => q.Ticker.Equals(tick)).ToList();
+                    stocks = db.Stocks.Where(q => q.Ticker == tick ).ToList();
                 }
             }
             catch (Exception)
@@ -38,7 +38,7 @@ namespace PlazmaStockGame.DataAccess
         /// <param name="tick">ticker symbol EX: TSLA</param>
         /// <param name="day">Specific Date for a specific symbol</param>
         /// <returns>returns a list of stocks, but should only be one item in the list</returns>
-        public static List<Stock> GetStockByDate(string tick, DateOnly day)
+        public static List<Stock> GetStockByDate(string tick, DateTime day)
         {
             List<Stock> stocks;
             try
@@ -53,8 +53,39 @@ namespace PlazmaStockGame.DataAccess
 
                 throw;
             }
+
+            //List<Stock> newStocks = stocks.GetRange(0, 7);
+
             
             return stocks;
         }
+
+
+
+
+        public static List<Stock> GetStocksAfterDate(string tick, DateTime day)
+        {
+            List<Stock> stocks;
+
+
+            try
+            {
+                using (StockDbContext db = new StockDbContext())
+                {
+                    stocks = db.Stocks.Where(q => q.Ticker.Equals(tick) && (q.Date.CompareTo(day)  >= 0)).ToList();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            List<Stock> newStocks = stocks.GetRange(0, 10);
+
+            return newStocks;
+        }
+
+
     }
 }

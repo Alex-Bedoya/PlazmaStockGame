@@ -94,9 +94,12 @@
         @*options panel*@
         <div class="col-3 float-end">
             <div class="col">
-                <span>@Html.RadioButton("Options", "buyRadioBtn", false)  Buy</span>
-                <span>@Html.RadioButton("Options", "sellRadioBtn", false)  Sell</span>
-                <span>@Html.RadioButton("Options", "holdRadioBtn", false)  Hold</span>
+                <input type="radio" id="buyRadioBtn" name="Options" value="Buy"/>
+                <label for="buyRadioBtn">Buy</label>
+                <input type="radio" id="sellRadioBtn" name="Options" value="Sell"/>
+                <label for="sellRadioBtn">Sell</label>
+                <input type="radio" id="holdRadioBtn" name="Options" value="Hold"/>
+                <label for="holdRadioBtn">Hold</label>
             </div>
         </div>
     </div>
@@ -111,11 +114,11 @@
 
 @{foreach (Stock stck in Model.stocks)
     {
-                <tr class="table-header">
-                    <th>@stck.Ticker</th>
-                    <th>@stck.Date.ToString()</th>
-                    <th>@stck.Cost</th>
-                </tr>
+                                            <tr class="table-header">
+                                                <th>@stck.Ticker</th>
+                                                <th>@stck.Date.ToString()</th>
+                                                <th>@stck.Cost</th>
+                                            </tr>
     
     }
 
@@ -213,8 +216,18 @@
                     //document.getElementById("result").innerHTML = obj.currMoney;
                     //alert(JSON.stringify(message.currMoney));
                     
-                    alert(JSON.stringify(message.stocks));
+                    //alert(JSON.stringify(message.stocks));
                     
+                    // ***************** Radio Button Logic Placeholder ******************************
+                    if (document.getElementById("buyRadioBtn").checked) {
+                        document.getElementById("result").innerHTML = "Buy";
+                    } else if (document.getElementById("sellRadioBtn").checked) {
+                        document.getElementById("result").innerHTML = "Sell";
+                    } else if (document.getElementById("holdRadioBtn").checked) {
+                        document.getElementById("result").innerHTML = "Hold";
+                    } else {
+                        alert("You must select an Option");
+                    }
                 }
             });
         });

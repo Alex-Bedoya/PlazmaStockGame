@@ -23,8 +23,6 @@ namespace PlazmaStockGame.Pages
 
 
 
-
-
         public void OnGet()
         {
             Ticker = HttpContext.Session.GetString("_Ticker");

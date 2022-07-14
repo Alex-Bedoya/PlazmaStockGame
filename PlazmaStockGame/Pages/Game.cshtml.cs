@@ -161,6 +161,12 @@ namespace PlazmaStockGame.Pages
         {
             PullData();
 
+            if (CurrDayIndex >= 7)
+            {
+                //the game is over because the game lasts for 7 days
+                Quit();
+            }
+
             CurrDayIndex++;
 
             PushData();
@@ -208,8 +214,35 @@ namespace PlazmaStockGame.Pages
 
         public IActionResult OnPostPurchase(int amount)
         {
-            return new JsonResult("some stuff");
+            Hold();
+            DataPackage data = new DataPackage(CurrMoney, stocks, CurrDayIndex, StocksOwned);
+            JsonResult json = new JsonResult(data);
+            return json;
         }
 
     }
+
+
+    /// <summary>
+    /// this object was made to package all the data we need to send back using a JsonResult. 
+    /// </summary>
+    public class DataPackage {
+
+        public double CurrMoney { get; set; }
+
+        public List<Stock> stocks { get; set; }
+
+        public int CurrDayIndex { get; set; }
+
+        public int StocksOwned { get; set; }
+
+        public DataPackage( double currMoney,  List<Stock> stocks, int currDayIndex, int stocksOwned)
+        {
+            CurrMoney = currMoney;
+            this.stocks = stocks;
+            CurrDayIndex = currDayIndex;
+            StocksOwned = stocksOwned;
+        }
+    }
+
 }

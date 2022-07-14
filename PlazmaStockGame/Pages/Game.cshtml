@@ -71,7 +71,7 @@
             </div>
             <div class="row mx-auto">
                 <p>Please enter an amount of stocks you want to buy:</p>
-                <input class="w-25" type="number" id="txtQuantity" name="txtQuantity" min="1" max="100" onchange="updateSlider(this.value)">
+                <input class="w-25" type="number" id="txtQuantity" name="txtQuantity" min="100" max="10000" onchange="updateSlider(this.value)">
             </div>
             <div class="row mx-auto">
                 <label for="myRange">Please select an amount of stocks you want to buy</label>
@@ -100,29 +100,27 @@
         </tr>
 
 @{foreach (Stock stck in Model.stocks)
-{
-     <tr class="table-header">
-            <th>@stck.Ticker</th>
-            <th>@stck.Date.ToString()</th>
-            <th>@stck.Cost</th>
-        </tr>
+    {
+            <tr class="table-header">
+                <th>@stck.Ticker</th>
+                <th>@stck.Date.ToString()</th>
+                <th>@stck.Cost</th>
+            </tr>
     
-}
+    }
+
 }
 </table>
 
-@*<div>
+<p id="currentDate"></p>
+<p id="currentBal"></p>
+<p id="stocksOwned"></p>
+<p id="stockPrice"></p>
 
-    <p id="CurrentDay">Here is the Current Day: @Model.CurrDate</p>
-    <div id="result">----</div>
-    @Html.AntiForgeryToken()
-    <button type="button" id="NextDay">Next Day</button>
 
-</div>
 
-@Html.AntiForgeryToken()
-<button type="button" id="invokeAjaxHello">Run Hello</button>
-<div id="result">----</div>*@
+
+
 
 
 @section Scripts
@@ -166,7 +164,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Game?handler=NextDay",
-                data: { "date": '@Model.CurrDate' },
+                data: { "date": '@Model.stocks[@Model.CurrDayIndex].Date' },
                 contentType: 'application/x-www-form-urlencoded',
                 dataType: "json",
                 headers:
@@ -175,6 +173,7 @@
                 },
                 success: function(message) {
                     document.getElementById("result").innerHTML = message;
+
                 }
             });
 
@@ -183,6 +182,7 @@
         $("#btnSubmit").click(function() {
             //var amount = document.getElementById('txtQuantity').value;
             // check witch radio button was clicked here and run a different ajax method for each one.
+            var test = "test";
             $.ajax({
                 type: "POST",
                 url: "/Game?handler=Purchase",
@@ -194,7 +194,17 @@
                     "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
                 },
                 success: function(message) {
-                    document.getElementById("result").innerHTML = message;
+                    document.getElementById("currentDate").innerHTML = message.stocks[message.currDayIndex].date;
+                    document.getElementById("currentBal").innerHTML = message.currMoney;
+                    document.getElementById("stocksOwned").innerHTML = message.stocksOwned;
+                    document.getElementById("stockPrice").innerHTML = message.stocks[message.currDayIndex].cost;
+
+                    //var obj = JSON.parse(message);
+                    //document.getElementById("result").innerHTML = obj.currMoney;
+                    //alert(JSON.stringify(message.currMoney));
+                    
+                    alert(JSON.stringify(message.stocks));
+                    
                 }
             });
         });

@@ -44,6 +44,10 @@
 
         .sidePanel {
         }
+
+        .float-end {
+            font-size: 1.5em;
+        }
     </style>
 </head>
 
@@ -88,7 +92,13 @@
             </div>
         </div>
         @*options panel*@
-        <div class="col-3 float-end"></div>
+        <div class="col-3 float-end">
+            <div class="col">
+                <span>@Html.RadioButton("Options", "buyRadioBtn", false)  Buy</span>
+                <span>@Html.RadioButton("Options", "sellRadioBtn", false)  Sell</span>
+                <span>@Html.RadioButton("Options", "holdRadioBtn", false)  Hold</span>
+            </div>
+        </div>
     </div>
 </body>
 
@@ -101,11 +111,11 @@
 
 @{foreach (Stock stck in Model.stocks)
     {
-            <tr class="table-header">
-                <th>@stck.Ticker</th>
-                <th>@stck.Date.ToString()</th>
-                <th>@stck.Cost</th>
-            </tr>
+                <tr class="table-header">
+                    <th>@stck.Ticker</th>
+                    <th>@stck.Date.ToString()</th>
+                    <th>@stck.Cost</th>
+                </tr>
     
     }
 

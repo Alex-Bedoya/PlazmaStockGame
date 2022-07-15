@@ -48,8 +48,6 @@
                 <label>Welcome to the Game your stock is: @Model.Ticker</label>
                 <!--Div that will hold the pie chart-->
                 <div id="container" style="height: 400px"></div>
-                <div id="drag"></div>
-                <div id="drop"></div>
             </div>
             <div class="row mx-auto">
                 <p>Please enter an amount of stocks you want to buy:</p>
@@ -91,15 +89,15 @@
     </tr>
 
     @{
-        //foreach (Stock stck in Model.stocks)
-        //{
-        //    <tr class="table-header">
-        //        <th>@stck.Ticker</th>
-        //        <th>@stck.Date.ToString()</th>
-        //        <th>@stck.Cost</th>
-        //    </tr>
+        foreach (Stock stck in Model.stocks)
+        {
+            <tr class="table-header">
+                <th>@stck.Ticker</th>
+                <th>@stck.Date.ToString()</th>
+                <th>@stck.Cost</th>
+            </tr>
 
-        //}
+        }
 
     }
 </table>
@@ -118,33 +116,87 @@
 @section Scripts
     {
     <script type="text/javascript">
+        var purchase = 0;
+        var adjustAmount = @Model.CurrMoney;
+        var chart = new Highcharts.Chart({
+
+            chart: {
+                renderTo: 'container',
+                animation: false
+            },
+
+            title: {
+                text: 'Transaction'
+            },
+
+            xAxis: {
+                categories: ['Transaction Details', 'Your Funds']
+            },
+
+            plotOptions: {
+                series: {
+                    point: {
+                        events: {
+
+                            drag: function(e) {
+                                // Returning false stops the drag and drops. Example:
+
+                                //if (this.series.yData[0] >= @Model.CurrMoney) {
+                                //    this.y = @Model.CurrMoney;
+                                //    this.series.yData[0] = @Model.CurrMoney;
+                                //    return false;
+                                //}
+
+                                if (this.category == "Transaction Details") {
+                                    purchase = this.series.yData[0];
+                                    adjustAmount = @Model.CurrMoney - purchase;
+                                }
+                                if (this.category == "Your Funds") {
+                                    purchase = @Model.CurrMoney - this.series.yData[1];
+                                    adjustAmount = this.series.yData[1];
+                                }
+                                //$('#drag').html(
+                                //    'Dragging <b>' + this.series.name + '</b>, <b>' + this.category + '</b> to <b>' + purchase.toFixed(2) + '</b> adjusted: <b>' + adjustAmount.toFixed(2) + '</b>');
+                            },
+                            drop: function() {
+                                this.series.setData([purchase, adjustAmount]);
+                                document.getElementById('txtQuantity').value = purchase.toFixed(2);
+                                var percent = (purchase / @Model.CurrMoney) * 100;
+                                document.getElementById('myRange').value = percent;
+                            }
+                        }
+                    },
+                    stickyTracking: false
+                },
+                column: {
+                    stacking: 'normal'
+                },
+                line: {
+                    cursor: 'ns-resize'
+                }
+            },
+
+            tooltip: {
+                yDecimals: 2
+            },
+
+            series: [{
+                data: [purchase, adjustAmount - purchase],
+                draggableY: true,
+                dragMinY: 0,
+                type: 'column',
+                minPointLength: 2
+            }]
+        });
         function updateTextInput(val) {
-            var purchase = @Model.CurrMoney * (val / 100);
-            document.getElementById('txtQuantity').value = purchase;
-            changeGraphValue(purchase);
+            var update = @Model.CurrMoney * (val / 100);
+            document.getElementById('txtQuantity').value = update;
+            chart.series.setData([val, (@Model.CurrMoney - val)]);
         };
         function updateSlider(val) {
             var percent = (val / @Model.CurrMoney) * 100;
             document.getElementById('myRange').value = percent;
-            changeGraphValue(val);
-        };
-        function changeGraphValue(purchase) {
-            remaining = @Model.CurrMoney - purchase;
-            var data = google.visualization.arrayToDataTable([
-                ['Stock Transaction', 'representation'],
-                ['Funds being used', purchase],
-                ['Funds Remaining', remaining],
-            ]);
-
-            var options = {
-                pieHole: 0.5,
-                pieSliceTextStyle: {
-                    color: 'black',
-                },
-                legend: 'none'
-            };
-            var chart = new google.visualization.PieChart(document.getElementById('donut_single'));
-            chart.draw(data, options);
+            chart.series.setData([val, (@Model.CurrMoney - val)]);
         };
     </script>
 
@@ -214,135 +266,10 @@
     </script>
 
     <script type="text/javascript">
-        initialDraw();
-        function initialDraw() {
-            var purchase = 0;
-            var adjustAmount = @Model.CurrMoney;
-            var chart = new Highcharts.Chart({
-
-                chart: {
-                    renderTo: 'container',
-                    animation: true
-                },
-
-                title: {
-                    text: 'Transaction Details'
-                },
-
-                xAxis: {
-                    categories: ['Transaction Amount', 'Adjusted Funds']
-                },
-
-                plotOptions: {
-                    series: {
-                        point: {
-                            events: {
-
-                                drag: function(e) {
-                                    // Returning false stops the drag and drops. Example:
-                                    /*
-                                    if (e.newY > 300) {
-                                        this.y = 300;
-                                        return false;
-                                    }
-                                    */
 
 
-                                    purchase = Highcharts.numberFormat(e.y, 2);
-                                    adjustAmount = @Model.CurrMoney - purchase;
-                                    refreshDraw(adjustAmount, purchase);
-                                    $('#drag').html(
-                                        'Dragging <b>' + this.series.name + '</b>, <b>' + this.category + '</b> to <b>' + purchase + '</b>');
-                                },
-                                drop: function() {
-                                    purchase = Highcharts.numberFormat(this.y, 2);
-                                    adjustAmount = @Model.CurrMoney - purchase;
-                                    refreshDraw(adjustAmount, purchase);
-                                }
-                            }
-                        },
-                        stickyTracking: false
-                    },
-                },
-
-                tooltip: {
-                    yDecimals: 2
-                },
-
-                series: [{
-                    data: [adjustAmount, purchase],
-                    //draggableX: true,
-                    draggableY: true,
-                    dragMinY: 0,
-                    type: 'column',
-                    minPointLength: 2
-                }]
-
-            });
-        };
-        function refreshDraw(adjustAmount, purchase) {
-            var chart = new Highcharts.Chart({
-
-                chart: {
-                    renderTo: 'container',
-                    animation: true
-                },
-
-                title: {
-                    text: 'Transaction Details'
-                },
-
-                xAxis: {
-                    categories: ['Transaction Amount', 'Adjusted Funds']
-                },
-
-                plotOptions: {
-                    series: {
-                        point: {
-                            events: {
-
-                                drag: function(e) {
-                                    // Returning false stops the drag and drops. Example:
-                                    /*
-                                    if (e.newY > 300) {
-                                        this.y = 300;
-                                        return false;
-                                    }
-                                    */
 
 
-                                    purchase = Highcharts.numberFormat(e.y, 2);
-                                    adjustAmount = @Model.CurrMoney - purchase;
-                                    refreshDraw(adjustAmount, purchase);
-                                    $('#drag').html(
-                                        'Dragging <b>' + this.series.name + '</b>, <b>' + this.category + '</b> to <b>' + purchase + '</b>');
-                                },
-                                drop: function() {
-                                    purchase = Highcharts.numberFormat(this.y, 2);
-                                    adjustAmount = @Model.CurrMoney - purchase;
-                                    refreshDraw(adjustAmount, purchase);
-                                }
-                            }
-                        },
-                        stickyTracking: false
-                    },
-                },
-
-                tooltip: {
-                    yDecimals: 2
-                },
-
-                series: [{
-                    data: [adjustAmount, purchase],
-                    //draggableX: true,
-                    draggableY: true,
-                    dragMinY: 0,
-                    type: 'column',
-                    minPointLength: 2
-                }]
-
-            });
-        };
     </script>
 
 }

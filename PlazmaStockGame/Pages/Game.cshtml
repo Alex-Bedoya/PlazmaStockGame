@@ -104,9 +104,11 @@
     }
 </table>
 
+<p id="startDate"></p>
 <p id="currentDate"></p>
 <p id="currentBal"></p>
 <p id="stocksOwned"></p>
+<p id="ownedStocksCost"></p>
 <p id="stockPrice"></p>
 
 
@@ -172,13 +174,37 @@
         });
 
         $("#btnSubmit").click(function() {
+
+            // ***************** Radio Button Logic Placeholder ******************************
+            if (document.getElementById("buyRadioBtn").checked) 
+            {
+                document.getElementById("result").innerHTML = "Buy";
+                var option = 0;
+            } 
+            else if (document.getElementById("sellRadioBtn").checked) 
+            {
+                document.getElementById("result").innerHTML = "Sell";
+                var option = 1;
+            } 
+            else if (document.getElementById("holdRadioBtn").checked) 
+            {
+                document.getElementById("result").innerHTML = "Hold";
+                var option = 2;
+            } 
+            else {
+                alert("You must select an Option");
+                return;
+            }
+
+
             //var amount = document.getElementById('txtQuantity').value;
             // check witch radio button was clicked here and run a different ajax method for each one.
             var test = "test";
+            var amount = document.getElementById("myRange").value;
             $.ajax({
                 type: "POST",
                 url: "/Game?handler=Purchase",
-                data: { "amount": 200 },
+                data: { "amount": amount, "option":option },
                 contentType: 'application/x-www-form-urlencoded',
                 dataType: "json",
                 headers:
@@ -186,10 +212,15 @@
                     "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
                 },
                 success: function(message) {
-                    document.getElementById("currentDate").innerHTML = message.stocks[message.currDayIndex].date;
-                    document.getElementById("currentBal").innerHTML = message.currMoney;
-                    document.getElementById("stocksOwned").innerHTML = message.stocksOwned;
-                    document.getElementById("stockPrice").innerHTML = message.stocks[message.currDayIndex].cost;
+
+                    var amountInStocks = message.stocksOwned * message.stocks[message.currDayIndex].cost;
+                    
+                    document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
+                    document.getElementById("currentDate").innerHTML = "Current Day: " + message.stocks[message.currDayIndex].date;
+                    document.getElementById("currentBal").innerHTML = "Current Balance: $" + message.currMoney;
+                    document.getElementById("stocksOwned").innerHTML = "Stocks Currently Owned: " + message.stocksOwned;
+                    document.getElementById("ownedStocksCost").innerHTML = "Cost of all the stocks you own: " + amountInStocks;
+                    document.getElementById("stockPrice").innerHTML = "Stock Price for today: $" + message.stocks[message.currDayIndex].cost;
 
                     //var obj = JSON.parse(message);
                     //document.getElementById("result").innerHTML = obj.currMoney;
@@ -197,16 +228,7 @@
 
                     //alert(JSON.stringify(message.stocks));
 
-                    // ***************** Radio Button Logic Placeholder ******************************
-                    if (document.getElementById("buyRadioBtn").checked) {
-                        document.getElementById("result").innerHTML = "Buy";
-                    } else if (document.getElementById("sellRadioBtn").checked) {
-                        document.getElementById("result").innerHTML = "Sell";
-                    } else if (document.getElementById("holdRadioBtn").checked) {
-                        document.getElementById("result").innerHTML = "Hold";
-                    } else {
-                        alert("You must select an Option");
-                    }
+                   
                 }
             });
         });

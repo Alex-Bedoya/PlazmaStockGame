@@ -210,7 +210,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Game?handler=NextDay",
-                
+                data: { "date": '@Model.stocks[@Model.CurrDayIndex].Date' },
                 contentType: 'application/x-www-form-urlencoded',
                 dataType: "json",
                 headers:
@@ -228,21 +228,18 @@
         $("#btnSubmit").click(function() {
 
             // ***************** Radio Button Logic Placeholder ******************************
-            if (document.getElementById("buyRadioBtn").checked) 
-            {
+            if (document.getElementById("buyRadioBtn").checked) {
                 document.getElementById("result").innerHTML = "Buy";
                 var option = 0;
-            } 
-            else if (document.getElementById("sellRadioBtn").checked) 
-            {
+            }
+            else if (document.getElementById("sellRadioBtn").checked) {
                 document.getElementById("result").innerHTML = "Sell";
                 var option = 1;
-            } 
-            else if (document.getElementById("holdRadioBtn").checked) 
-            {
+            }
+            else if (document.getElementById("holdRadioBtn").checked) {
                 document.getElementById("result").innerHTML = "Hold";
                 var option = 2;
-            } 
+            }
             else {
                 alert("You must select an Option");
                 return;
@@ -254,7 +251,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Game?handler=Purchase",
-                data: { "amount": amount, "option":option },
+                data: { "amount": amount, "option": option },
                 contentType: 'application/x-www-form-urlencoded',
                 dataType: "json",
                 headers:
@@ -269,7 +266,7 @@
                     }
 
                     var amountInStocks = message.stocksOwned * message.stocks[message.currDayIndex].cost;
-                    
+
                     document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
                     document.getElementById("currentDate").innerHTML = "Current Day: " + message.stocks[message.currDayIndex].date;
                     document.getElementById("currentBal").innerHTML = "Current Balance: $" + message.currMoney;

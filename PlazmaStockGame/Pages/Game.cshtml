@@ -193,12 +193,12 @@
         function updateTextInput(val) {
             var update = @Model.CurrMoney * (val / 100);
             document.getElementById('txtQuantity').value = update;
-            chart.series.setData([val, (@Model.CurrMoney - val)]);
+            chart.series[0].setData([update, (@Model.CurrMoney - update)]);
         };
         function updateSlider(val) {
             var percent = (val / @Model.CurrMoney) * 100;
             document.getElementById('myRange').value = percent;
-            chart.series.setData([val, (@Model.CurrMoney - val)]);
+            chart.series[0].setData([parseFloat(val), (@Model.CurrMoney - val)]);
         };
     </script>
 
@@ -210,7 +210,7 @@
             $.ajax({
                 type: "POST",
                 url: "/Game?handler=NextDay",
-                data: { "date": '@Model.stocks[@Model.CurrDayIndex].Date' },
+                
                 contentType: 'application/x-www-form-urlencoded',
                 dataType: "json",
                 headers:
@@ -284,13 +284,6 @@
                 }
             });
         });
-
-    </script>
-
-    <script type="text/javascript">
-
-
-
 
     </script>
 

@@ -10,8 +10,8 @@ namespace PlazmaStockGame.DataAccess
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
-            optionsBuilder.UseSqlServer(
-               @"Server=DESKTOP-27VJS0V;Database=PlazmaStockGame;Trusted_Connection=True;");
+            /*optionsBuilder.UseSqlServer(
+               @"Server=DESKTOP-27VJS0V;Database=PlazmaStockGame;Trusted_Connection=True;");*/
             //Brendan
             //Ryan Desktop
             //@"Server=DESKTOP-D61Q4DT;Database=BankApp;Trusted_Connection=True;");

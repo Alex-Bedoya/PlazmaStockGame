@@ -139,6 +139,7 @@ namespace PlazmaStockGame.Pages
             else
             {
                 //error, you don't have that many stocks to sell
+                
             }
 
             if (CurrDayIndex >= 7)
@@ -163,6 +164,8 @@ namespace PlazmaStockGame.Pages
             {
                 //the game is over because the game lasts for 7 days
                 Quit();
+                PushData();
+                return;
             }
 
             CurrDayIndex++;
@@ -210,9 +213,28 @@ namespace PlazmaStockGame.Pages
             return new JsonResult(date);//this is fake line
         }
 
-        public IActionResult OnPostPurchase(int amount)
+        public IActionResult OnPostPurchase(int amount, int option)
         {
-            Hold();
+            if (option == 0)
+            {
+                //if the option they selected was buy
+                Buy(amount);
+            }
+            else if (option == 1)
+            {
+                //if the option they selected was sell
+                Sell(amount);
+            }
+            else if (option == 2)
+            {
+                //if the option they selected was hold
+                Hold();
+            }
+
+
+
+
+
             DataPackage data = new DataPackage(CurrMoney, stocks, CurrDayIndex, StocksOwned);
             JsonResult json = new JsonResult(data);
             return json;

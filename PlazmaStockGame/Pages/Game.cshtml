@@ -91,11 +91,11 @@
     @{
         foreach (Stock stck in Model.stocks)
         {
-            <tr class="table-header">
-                <th>@stck.Ticker</th>
-                <th>@stck.Date.ToString()</th>
-                <th>@stck.Cost</th>
-            </tr>
+                <tr class="table-header">
+                    <th>@stck.Ticker</th>
+                    <th>@stck.Date.ToString()</th>
+                    <th>@stck.Cost</th>
+                </tr>
 
         }
 
@@ -248,9 +248,7 @@
                 return;
             }
 
-
-            //var amount = document.getElementById('txtQuantity').value;
-            // check witch radio button was clicked here and run a different ajax method for each one.
+            
             var test = "test";
             var amount = document.getElementById("myRange").value;
             $.ajax({
@@ -265,6 +263,11 @@
                 },
                 success: function(message) {
 
+                    if (message.errorMessage) {
+                        alert(message.errorMessage);
+                        return;
+                    }
+
                     var amountInStocks = message.stocksOwned * message.stocks[message.currDayIndex].cost;
                     
                     document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
@@ -274,13 +277,6 @@
                     document.getElementById("ownedStocksCost").innerHTML = "Cost of all the stocks you own: " + amountInStocks;
                     document.getElementById("stockPrice").innerHTML = "Stock Price for today: $" + message.stocks[message.currDayIndex].cost;
 
-                    //var obj = JSON.parse(message);
-                    //document.getElementById("result").innerHTML = obj.currMoney;
-                    //alert(JSON.stringify(message.currMoney));
-
-                    //alert(JSON.stringify(message.stocks));
-
-                   
                 }
             });
         });

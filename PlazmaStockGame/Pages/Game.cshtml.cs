@@ -107,7 +107,7 @@ namespace PlazmaStockGame.Pages
                 return;
             }
 
-            if (CurrDayIndex >= 7)
+            if (CurrDayIndex > 7)
             {
                 //the game is over because the game lasts for 7 days
                 Quit();

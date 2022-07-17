@@ -162,7 +162,6 @@
 <!-- Modal quit content -->
 <div id="quitModal" class="modal">
     <div class="modal-content">
-        <span class="close" id="quitClose">&times;</span>
         <div class="col-6 mx-auto">
             <div>
                 <h3 id="finalBalance">Final Money:</h3>
@@ -545,6 +544,8 @@
 
 
         function EndGame(msg) {
+            buyModal.style.display = "none";
+            sellModal.style.display = "none";
             var gainLoss = msg.currMoney - 10000;
             document.getElementById("finalBalance").innerHTML = "Final Balance: $" + msg.currMoney.toFixed(2);
             document.getElementById("finalGainLoss").innerHTML = "Final Gain/Loss: $" + gainLoss.toFixed(2);

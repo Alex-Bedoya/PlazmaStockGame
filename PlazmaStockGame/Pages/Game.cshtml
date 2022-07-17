@@ -79,6 +79,7 @@
         <div class="col-3 float-md-start">
             <p id="startDate"></p>
             <p id="currentDate"></p>
+            <p id="elaspedDays"></p>
             <p id="currentBal"></p>
             <p id="stocksOwned"></p>
             <p id="ownedStocksCost"></p>
@@ -146,7 +147,7 @@
             <div class="row mx-auto">
                 <label for="myRange">Please select an amount of stocks you want to buy</label>
                 <div class="slidecontainer">
-                    <input type="range" min="1" max="100" value="0" class="slider" id="sellRange" onchange="updateTextInputSell(this.value)">
+                    <input type="range" min="1" max="1000" value="0" class="slider" id="sellRange" onchange="updateTextInputSell(this.value)">
                 </div>
             </div>
             <div class="row mx-auto sidePanel">
@@ -417,6 +418,7 @@
 
                     document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
                     document.getElementById("currentDate").innerHTML = "Current Day: " + message.stocks[message.currDayIndex].date;
+                    document.getElementById("elaspedDays").innerHTML = "Days Elasped: " + message.currDayIndex;
                     document.getElementById("currentBal").innerHTML = "Current Balance: $" + message.currMoney.toFixed(2);
                     document.getElementById("stocksOwned").innerHTML = "Stocks Currently Owned: " + message.stocksOwned;
                     document.getElementById("ownedStocksCost").innerHTML = "Cost of all the stocks you own: " + amountInStocks;
@@ -458,6 +460,7 @@
 
                     document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
                     document.getElementById("currentDate").innerHTML = "Current Day: " + message.stocks[message.currDayIndex].date;
+                    document.getElementById("elaspedDays").innerHTML = "Days Elasped: " + message.currDayIndex;
                     document.getElementById("currentBal").innerHTML = "Current Balance: $" + message.currMoney.toFixed(2);
                     document.getElementById("stocksOwned").innerHTML = "Stocks Currently Owned: " + message.stocksOwned;
                     document.getElementById("ownedStocksCost").innerHTML = "Cost of all the stocks you own: " + amountInStocks.toFixed(2);
@@ -499,6 +502,7 @@
 
                     document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
                     document.getElementById("currentDate").innerHTML = "Current Day: " + message.stocks[message.currDayIndex].date;
+                    document.getElementById("elaspedDays").innerHTML = "Days Elasped: " + message.currDayIndex;
                     document.getElementById("currentBal").innerHTML = "Current Balance: $" + message.currMoney;
                     document.getElementById("stocksOwned").innerHTML = "Stocks Currently Owned: " + message.stocksOwned;
                     document.getElementById("ownedStocksCost").innerHTML = "Cost of all the stocks you own: " + amountInStocks;

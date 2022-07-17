@@ -8,6 +8,7 @@
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://rawgithub.com/highcharts/draggable-points/master/draggable-points.js"></script>
     <style>
+
         .mainPanel {
             box-shadow: 2px 2px 6px 4px lightgrey;
             margin-left: auto;
@@ -16,9 +17,12 @@
             min-width: 600px;
             padding: 24px;
             border-radius: 10px;
+            background-image: url("Krookodile.png");
+            background-color: #cccccc;
         }
 
         .sidePanel {
+
         }
 
         .float-end {
@@ -147,13 +151,13 @@
                 <p id="stockSellPrice"></p>
             </div>
             <div class="row mx-auto">
-                <p>Please enter an amount of stocks you want to buy:</p>
-                <input class="w-25" type="number" id="txtSellQuantity" min="100" max="10000" onchange="updateSliderSell(this.value)">
+                <p>Please enter an amount of stocks you want to sell:</p>
+                <input class="w-25" type="number" id="txtSellQuantity" min="1" max="1000" onchange="updateSliderSell(this.value)">
             </div>
             <div class="row mx-auto">
-                <label for="myRange">Please select an amount of stocks you want to buy</label>
+                <label for="myRange">Please select an amount of stocks you want to sell</label>
                 <div class="slidecontainer">
-                    <input type="range" min="1" max="1000" value="0" class="slider" id="sellRange" onchange="updateTextInputSell(this.value)">
+                    <input type="range" min="1" max="1000" value="0" class="w-75 slider" id="sellRange" onchange="updateTextInputSell(this.value)">
                 </div>
             </div>
             <div class="row mx-auto sidePanel">

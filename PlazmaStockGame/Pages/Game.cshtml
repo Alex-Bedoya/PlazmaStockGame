@@ -117,6 +117,9 @@
                 <div id="buyChart" style="height: 400px"></div>
             </div>
             <div class="row mx-auto">
+                <p id="stockBuyPrice"></p>
+            </div>
+            <div class="row mx-auto">
                 <p>Please enter an amount of stocks you want to buy:</p>
                 <input class="w-25" type="number" id="txtBuyQuantity" min="1" max="10000" onchange="updateSliderBuy(this.value)">
             </div>
@@ -143,6 +146,9 @@
         <div class="col-6 mx-auto">
             <div class="row mx-auto">
                 <div id="sellChart" style="height: 400px"></div>
+            </div>
+            <div class="row mx-auto">
+                <p id="stockSellPrice"></p>
             </div>
             <div class="row mx-auto">
                 <p>Please enter an amount of stocks you want to sell:</p>
@@ -494,6 +500,72 @@
                     document.getElementById("stockPrice").innerHTML = "Stock Price for today: $" + message.stocks[message.currDayIndex].cost;
                     buyModal.style.display = "none";
                     sellModal.style.display = "none";
+                }
+            });
+        });
+
+        // buy
+        $("#btnBuy").click(function() {
+
+            var option = 2;
+
+            var amount = 0;
+            $.ajax({
+                type: "POST",
+                url: "/Game?handler=Purchase",
+                data: { "amount": amount, "option": option },
+                contentType: 'application/x-www-form-urlencoded',
+                dataType: "json",
+                headers:
+                {
+                    "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function(message) {
+
+                    if (message.errorMessage) {
+                        alert(message.errorMessage);
+                        return;
+                    }
+                    if (message.isGameOver) {
+                        EndGame(message);
+                        return;
+                    }
+
+                    document.getElementById("stockBuyPrice").innerHTML = "Stock Price for today: $" + message.stocks[message.currDayIndex].cost;
+
+                }
+            });
+        });
+
+        //sell
+        $("#btnSell").click(function() {
+
+            var option = 2;
+
+            var amount = 0;
+            $.ajax({
+                type: "POST",
+                url: "/Game?handler=Purchase",
+                data: { "amount": amount, "option": option },
+                contentType: 'application/x-www-form-urlencoded',
+                dataType: "json",
+                headers:
+                {
+                    "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function(message) {
+
+                    if (message.errorMessage) {
+                        alert(message.errorMessage);
+                        return;
+                    }
+                    if (message.isGameOver) {
+                        EndGame(message);
+                        return;
+                    }
+
+                    document.getElementById("stockSellPrice").innerHTML = "Stock Price for today: $" + message.stocks[message.currDayIndex].cost;
+
                 }
             });
         });

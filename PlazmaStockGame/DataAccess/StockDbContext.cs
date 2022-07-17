@@ -11,7 +11,7 @@ namespace PlazmaStockGame.DataAccess
         {
 
             optionsBuilder.UseSqlServer(
-            //   @"Server=DESKTOP-27VJS0V;Database=PlazmaStockGame;Trusted_Connection=True;");
+               @"Server=DESKTOP-27VJS0V;Database=PlazmaStockGame;Trusted_Connection=True;");
             //Brendan
             //Ryan Desktop
             @"Server=DESKTOP-D61Q4DT;Database=PlazmaStockGame;Trusted_Connection=True;");

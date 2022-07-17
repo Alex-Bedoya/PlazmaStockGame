@@ -21,7 +21,7 @@ namespace PlazmaStockGame.Pages
 
         public string ErrorMessage { get; set; }
 
-
+        public bool IsGameOver { get; set; }
 
 
 
@@ -33,6 +33,7 @@ namespace PlazmaStockGame.Pages
             CurrMoney = 10000;
             StocksOwned = 0;
             stocks = DbRepository.GetStocksAfterDate(Ticker, StartDate);
+            IsGameOver = false;
 
             PushData();//push all the data to the session
         }
@@ -170,7 +171,6 @@ namespace PlazmaStockGame.Pages
             {
                 //the game is over because the game lasts for 7 days
                 Quit();
-                PushData();
                 return;
             }
 
@@ -187,8 +187,15 @@ namespace PlazmaStockGame.Pages
         {
             PullData();
 
-            double sellMoney = stocks[CurrDayIndex].Cost * StocksOwned;
-            StocksOwned = 0;
+            IsGameOver = true;
+
+
+            double sellMoney = 0;
+            if (StocksOwned > 0)
+            {
+                sellMoney = stocks[CurrDayIndex].Cost * StocksOwned;
+                StocksOwned = 0;
+            }
 
             CurrMoney = CurrMoney + sellMoney;
 
@@ -196,7 +203,7 @@ namespace PlazmaStockGame.Pages
             CurrDayIndex = 8;
 
 
-
+            
             PushData();
 
 
@@ -210,14 +217,6 @@ namespace PlazmaStockGame.Pages
 
 
         //Ajax functions
-
-        public IActionResult OnPostNextDay(DateTime date)
-        {
-            //CurrDate = date;
-            //NextDay();
-            //return new JsonResult(CurrDate);
-            return new JsonResult(date);//this is fake line
-        }
 
         public IActionResult OnPostPurchase(int amount, int option)
         {
@@ -236,12 +235,14 @@ namespace PlazmaStockGame.Pages
                 //if the option they selected was hold
                 Hold();
             }
+            else if (option == 3)
+            {
+                Quit();
+            }
 
 
 
-
-
-            DataPackage data = new DataPackage(CurrMoney, stocks, CurrDayIndex, StocksOwned, ErrorMessage);
+            DataPackage data = new DataPackage(CurrMoney, stocks, CurrDayIndex, StocksOwned, ErrorMessage, IsGameOver);
             JsonResult json = new JsonResult(data);
             return json;
         }
@@ -264,13 +265,16 @@ namespace PlazmaStockGame.Pages
 
         public string ErrorMessage { get; set; }
 
-        public DataPackage( double currMoney, List<Stock> stocks, int currDayIndex, int stocksOwned, string errorMessage)
+        public bool IsGameOver { get; set; }
+
+        public DataPackage( double currMoney, List<Stock> stocks, int currDayIndex, int stocksOwned, string errorMessage, bool isGameOver)
         {
             CurrMoney = currMoney;
             this.stocks = stocks;
             CurrDayIndex = currDayIndex;
             StocksOwned = stocksOwned;
             ErrorMessage = errorMessage;
+            IsGameOver = isGameOver;
         }
     }
 

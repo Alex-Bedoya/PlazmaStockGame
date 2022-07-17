@@ -159,7 +159,7 @@
         <span class="close" id="quitClose">&times;</span>
         <div class="col-6 mx-auto">
             <div>
-                <h3>Final Money:</h3>
+                <h3 id="finalBalance">Final Money:</h3>
             </div>
         </div>
     </div>
@@ -173,7 +173,7 @@
     </tr>
 
     @{
-                            @*foreach (Stock stck in Model.stocks)
+                                            @*foreach (Stock stck in Model.stocks)
     {
     <tr class="table-header">
     <th>@stck.Ticker</th>
@@ -307,24 +307,6 @@
             });
         };
 
-        $("#NextDay").click(function() {
-            $.ajax({
-                type: "POST",
-                url: "/Game?handler=NextDay",
-                data: { "date": '@Model.stocks[@Model.CurrDayIndex].Date' },
-                contentType: 'application/x-www-form-urlencoded',
-                dataType: "json",
-                headers:
-                {
-                    "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
-                },
-                success: function(message) {
-                    document.getElementById("result").innerHTML = message;
-
-                }
-            });
-
-        });
 
         function DrawSellChart() {
             var purchase = 0;
@@ -401,24 +383,6 @@
             });
         };
 
-        $("#NextDay").click(function() {
-            $.ajax({
-                type: "POST",
-                url: "/Game?handler=NextDay",
-
-                contentType: 'application/x-www-form-urlencoded',
-                dataType: "json",
-                headers:
-                {
-                    "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
-                },
-                success: function(message) {
-                    document.getElementById("result").innerHTML = message;
-
-                }
-            });
-
-        });
 
 
         //Current things to handle game logic:
@@ -443,6 +407,10 @@
 
                     if (message.errorMessage) {
                         alert(message.errorMessage);
+                        return;
+                    }
+                    if (message.isGameOver) {
+                        EndGame(message);
                         return;
                     }
 
@@ -482,6 +450,10 @@
                         alert(message.errorMessage);
                         return;
                     }
+                    if (message.isGameOver) {
+                        EndGame(message);
+                        return;
+                    }
 
                     var amountInStocks = message.stocksOwned * message.stocks[message.currDayIndex].cost;
 
@@ -519,6 +491,10 @@
                         alert(message.errorMessage);
                         return;
                     }
+                    if (message.isGameOver) {
+                        EndGame(message);
+                        return;
+                    }
 
                     var amountInStocks = message.stocksOwned * message.stocks[message.currDayIndex].cost;
 
@@ -528,17 +504,50 @@
                     document.getElementById("stocksOwned").innerHTML = "Stocks Currently Owned: " + message.stocksOwned;
                     document.getElementById("ownedStocksCost").innerHTML = "Cost of all the stocks you own: " + amountInStocks;
                     document.getElementById("stockPrice").innerHTML = "Stock Price for today: $" + message.stocks[message.currDayIndex].cost;
-
+                    buyModal.style.display = "none";
+                    sellModal.style.display = "none";
 
                 }
             });
         });
 
 
+        //Quit
+        $("#btnQuit").click(function() {
+
+            var option = 3;
+
+            var amount = 0;
+            $.ajax({
+                type: "POST",
+                url: "/Game?handler=Purchase",
+                data: { "amount": amount, "option": option },
+                contentType: 'application/x-www-form-urlencoded',
+                dataType: "json",
+                headers:
+                {
+                    "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function(message) {
+
+                    if (message.errorMessage) {
+                        alert(message.errorMessage);
+                        return;
+                    }
+
+                    if (message.isGameOver) {
+                        EndGame(message);
+                        return;
+                    }
+                }
+            });
+        });
 
 
-
-
+        function EndGame(msg) {
+            document.getElementById("finalBalance").innerHTML = "Final Balance: $" + msg.currMoney;
+            quitModal.style.display = "block";
+        }
 
 
 

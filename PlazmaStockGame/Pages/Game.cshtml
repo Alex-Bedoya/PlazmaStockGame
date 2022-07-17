@@ -154,18 +154,21 @@
     </div>
 </div>
 
+<!-- Modal quit content -->
 <div id="quitModal" class="modal">
     <div class="modal-content">
         <span class="close" id="quitClose">&times;</span>
         <div class="col-6 mx-auto">
             <div>
                 <h3 id="finalBalance">Final Money:</h3>
+                <h4 id="finalGainLoss">Final Gain/Loss:</h4>
+                <h4 id="finalDaysPassed">Days Elapsed:</h4>
             </div>
         </div>
     </div>
 </div>
 
-<table>
+@*<table>
     <tr class="table-header">
         <th>Ticker</th>
         <th>Date</th>
@@ -173,7 +176,7 @@
     </tr>
 
     @{
-                                            @*foreach (Stock stck in Model.stocks)
+                                                        @*foreach (Stock stck in Model.stocks)
     {
     <tr class="table-header">
     <th>@stck.Ticker</th>
@@ -181,10 +184,10 @@
     <th>@stck.Cost</th>
     </tr>
 
-    }*@
+    }
 
     }
-</table>
+</table>*@
 
 <p id="startDate"></p>
 <p id="currentDate"></p>
@@ -545,7 +548,10 @@
 
 
         function EndGame(msg) {
-            document.getElementById("finalBalance").innerHTML = "Final Balance: $" + msg.currMoney;
+            var gainLoss = msg.currMoney - 10000;
+            document.getElementById("finalBalance").innerHTML = "Final Balance: $" + msg.currMoney.toFixed(2);
+            document.getElementById("finalGainLoss").innerHTML = "Final Gain/Loss: $" + gainLoss.toFixed(2);
+            document.getElementById("finalDaysPassed").innerHTML = "Days Elapsed: " + msg.currDayIndex;
             quitModal.style.display = "block";
         }
 

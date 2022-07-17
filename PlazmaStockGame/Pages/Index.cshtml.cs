@@ -30,7 +30,11 @@ namespace PlazmaStockGame.Pages
 
             if (!ModelState.IsValid) { return Page(); }
 
-            if (!stocks.Contains(Ticker)) { return Page(); }
+            if (!stocks.Contains(Ticker))
+            {
+                ViewData["Ticker"] = string.Format("Ticker {0}, does not exist", Ticker);
+                return Page(); 
+            }
 
             HttpContext.Session.SetString(SessionKeyTicker, Ticker);
 

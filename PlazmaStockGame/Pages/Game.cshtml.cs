@@ -107,7 +107,7 @@ namespace PlazmaStockGame.Pages
                 return;
             }
 
-            if (CurrDayIndex >= 7)
+            if (CurrDayIndex > 7)
             {
                 //the game is over because the game lasts for 7 days
                 Quit();
@@ -200,7 +200,7 @@ namespace PlazmaStockGame.Pages
             CurrMoney = CurrMoney + sellMoney;
 
             //set it to above 7 (the max days you can play the game for)
-            CurrDayIndex = 8;
+            //CurrDayIndex = 8;
 
 
             

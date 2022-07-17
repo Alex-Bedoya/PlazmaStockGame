@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
+using System.Windows;
 
 namespace PlazmaStockGame.Pages
 {
@@ -21,11 +22,19 @@ namespace PlazmaStockGame.Pages
 
         public void OnGet()
         {
-
+            
         }
         public async Task<IActionResult> OnPostAsync()
         {
+            List<string> stocks = DataAccess.DbRepository.GetAllTickers();
+
             if (!ModelState.IsValid) { return Page(); }
+
+            if (!stocks.Contains(Ticker))
+            {
+                ViewData["Ticker"] = string.Format("Ticker {0}, does not exist", Ticker);
+                return Page(); 
+            }
 
             HttpContext.Session.SetString(SessionKeyTicker, Ticker);
 

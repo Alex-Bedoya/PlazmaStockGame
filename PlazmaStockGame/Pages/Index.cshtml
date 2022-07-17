@@ -1,4 +1,5 @@
 ﻿@page
+@addTagHelper*, Microsoft.AspNetCore.MVC.TagHelpers
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
@@ -16,6 +17,14 @@
                 <span class="text-danger" asp-validation-for="Ticker"></span>
             </div>
         </div>
+        @if (ViewData["Ticker"] != null)
+        {
+            <script type="text/javascript">
+                window.onload = function () {
+                alert("@ViewData["Ticker"]");
+            };
+        </script>
+        }
         <div class="row mt-2">
             <div class="col float-end">
                 <button type="submit" class="btn btn-primary">Select</button>

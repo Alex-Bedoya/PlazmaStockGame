@@ -86,6 +86,27 @@ namespace PlazmaStockGame.DataAccess
             return newStocks;
         }
 
+        public static List<string> GetAllTickers()
+        {
+            List<string> tickers;
+
+
+            try
+            {
+                using (StockDbContext db = new StockDbContext())
+                {
+                    tickers = db.Stocks.Select(q => q.Ticker).ToList();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            return tickers;
+        }
+
 
     }
 }

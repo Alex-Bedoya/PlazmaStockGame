@@ -154,6 +154,17 @@
     </div>
 </div>
 
+<div id="quitModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="quitClose">&times;</span>
+        <div class="col-6 mx-auto">
+            <div>
+                <h3>Final Money:</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
 <table>
     <tr class="table-header">
         <th>Ticker</th>
@@ -162,7 +173,7 @@
     </tr>
 
     @{
-                @*foreach (Stock stck in Model.stocks)
+                            @*foreach (Stock stck in Model.stocks)
     {
     <tr class="table-header">
     <th>@stck.Ticker</th>
@@ -567,6 +578,10 @@
             DrawSellChart();
             sellModal.style.display = "block";
         }
+        btnQuit.onclick = function() {
+            quitModal.style.display = "block";
+        }
+        
 
         // When the user clicks on <span> (x), close the modal
         buyClose.onclick = function() {
@@ -575,12 +590,16 @@
         sellClose.onclick = function() {
             sellModal.style.display = "none";
         }
+        quitClose.onclick = function() {
+            quitModal.style.display = "none";
+        }
 
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
-            if (event.target == buyModal || event.target == sellModal) {
+            if (event.target == buyModal || event.target == sellModal || event.target == quitModal) {
                 buyModal.style.display = "none";
                 sellModal.style.display = "none";
+                quitModal.style.display = "none";
             }
         }
     </script>

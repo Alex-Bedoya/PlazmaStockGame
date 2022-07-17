@@ -173,7 +173,7 @@
     </tr>
 
     @{
-                                            @*foreach (Stock stck in Model.stocks)
+        @*foreach (Stock stck in Model.stocks)
     {
     <tr class="table-header">
     <th>@stck.Ticker</th>
@@ -205,27 +205,35 @@
 
         var buyChart;
         var sellChart;
+        var moneyRemaining = @Model.CurrMoney;
+        var dayIndex;
+        var StockValue;
+        var stockPrice = @Model.stocks[@Model.CurrDayIndex].Cost;
 
         function updateTextInputBuy(val) {
-            var update = @Model.CurrMoney * (val / 100);
-            document.getElementById('txtBuyQuantity').value = update;
-            buyChart.series[0].setData([update, (@Model.CurrMoney - update)]);
+            //var update = @Model.CurrMoney * (val / 100);
+            var changeValue = stockPrice * parseFloat(val);
+            document.getElementById('txtBuyQuantity').value = val;
+            buyChart.series[0].setData([changeValue, (moneyRemaining - changeValue)]);
         };
         function updateSliderBuy(val) {
-            var percent = (val / @Model.CurrMoney) * 100;
-            document.getElementById('buyRange').value = percent;
-            buyChart.series[0].setData([parseFloat(val), (@Model.CurrMoney - val)]);
+            //var percent = (val / moneyRemaining) * 100;
+            var changeValue = stockPrice * parseFloat(val);
+            document.getElementById('buyRange').value = val;
+            buyChart.series[0].setData([changeValue, (moneyRemaining - changeValue)]);
         };
 
         function updateTextInputSell(val) {
-            var update = @Model.CurrMoney * (val / 100);
-            document.getElementById('txtSellQuantity').value = update;
-            buyChart.series[0].setData([update, (@Model.CurrMoney - update)]);
+            //var update = moneyRemaining * (val / 100);
+            var changeValue = stockPrice * parseFloat(val);
+            document.getElementById('txtSellQuantity').value = val;
+            buyChart.series[0].setData([changeValue, (moneyRemaining - changeValue)]);
         };
         function updateSliderSell(val) {
-            var percent = (val / @Model.CurrMoney) * 100;
-            document.getElementById('sellRange').value = percent;
-            buyChart.series[0].setData([parseFloat(val), (@Model.CurrMoney - val)]);
+            //var percent = (val / moneyRemaining) * 100;
+            var changeValue = stockPrice * parseFloat(val);
+            document.getElementById('sellRange').value = val;
+            buyChart.series[0].setData([changeValue, (moneyRemaining - changeValue)]);
         };
     </script>
 
@@ -234,7 +242,8 @@
 
         function DrawBuyChart() {
             var purchase = 0;
-            var adjustAmount = @Model.CurrMoney;
+            var adjustAmount = moneyRemaining;
+
             buyChart = new Highcharts.Chart({
 
                 chart: {
@@ -266,10 +275,10 @@
 
                                     if (this.category == "Purchase Total") {
                                         purchase = this.series.yData[0];
-                                        adjustAmount = @Model.CurrMoney - purchase;
+                                        adjustAmount = moneyRemaining - purchase;
                                     }
                                     if (this.category == "Your Available Funds") {
-                                        purchase = @Model.CurrMoney - this.series.yData[1];
+                                        purchase = moneyRemaining - this.series.yData[1];
                                         adjustAmount = this.series.yData[1];
                                     }
                                     //$('#drag').html(
@@ -277,9 +286,10 @@
                                 },
                                 drop: function() {
                                     this.series.setData([purchase, adjustAmount]);
-                                    document.getElementById('txtBuyQuantity').value = purchase.toFixed(2);
-                                    var percent = (purchase / @Model.CurrMoney) * 100;
-                                    document.getElementById('buyRange').value = percent;
+                                    var stockDifferance = purchase / stockPrice;
+                                    document.getElementById('txtBuyQuantity').value = stockDifferance.toFixed(2);
+                                    //var percent = (purchase / moneyRemaining) * 100;
+                                    document.getElementById('buyRange').value = stockDifferance;
                                 }
                             }
                         },
@@ -310,7 +320,7 @@
 
         function DrawSellChart() {
             var purchase = 0;
-            var adjustAmount = @Model.CurrMoney; // put total stock value here
+            var adjustAmount = StockValue;
             buyChart = new Highcharts.Chart({
 
                 chart: {
@@ -342,10 +352,10 @@
 
                                     if (this.category == "Sell Amount Details") {
                                         purchase = this.series.yData[0];
-                                        adjustAmount = @Model.CurrMoney - purchase;
+                                        adjustAmount = StockValue - purchase;
                                     }
                                     if (this.category == "Your Stocks Remaining Value") {
-                                        purchase = @Model.CurrMoney - this.series.yData[1]; // this will also be based off of stock value
+                                        purchase = StockValue - this.series.yData[1];
                                         adjustAmount = this.series.yData[1];
                                     }
                                     //$('#drag').html(
@@ -353,9 +363,10 @@
                                 },
                                 drop: function() {
                                     this.series.setData([purchase, adjustAmount]);
-                                    document.getElementById('txtSellQuantity').value = purchase.toFixed(2);
-                                    var percent = (purchase / @Model.CurrMoney) * 100;
-                                    document.getElementById('sellRange').value = percent;
+                                    var stockDifferance = purchase / stockPrice;
+                                    document.getElementById('txtSellQuantity').value = stockDifferance.toFixed(2);
+                                    //var percent = (purchase / moneyRemaining) * 100;
+                                    document.getElementById('sellRange').value = stockDifferance;
                                 }
                             }
                         },
@@ -392,7 +403,7 @@
 
             var option = 0;
 
-            var amount = document.getElementById("sellRange").value;
+            var amount = parseInt(document.getElementById("txtBuyQuantity").value);
             $.ajax({
                 type: "POST",
                 url: "/Game?handler=Purchase",
@@ -415,6 +426,11 @@
                     }
 
                     var amountInStocks = message.stocksOwned * message.stocks[message.currDayIndex].cost;
+
+                    moneyRemaining = message.currMoney;
+                    StockValue = amountInStocks;
+                    dayIndex = message.currDayIndex;
+                    stockPrice = message.stocks[message.currDayIndex].cost;
 
                     document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
                     document.getElementById("currentDate").innerHTML = "Current Day: " + message.stocks[message.currDayIndex].date;
@@ -433,7 +449,7 @@
 
             var option = 1;
 
-            var amount = document.getElementById("buyRange").value;
+            var amount = parseInt(document.getElementById("txtSellQuantity").value);
             $.ajax({
                 type: "POST",
                 url: "/Game?handler=Purchase",
@@ -456,6 +472,11 @@
                     }
 
                     var amountInStocks = message.stocksOwned * message.stocks[message.currDayIndex].cost;
+
+                    moneyRemaining = message.currMoney;
+                    StockValue = amountInStocks;
+                    dayIndex = message.currDayIndex;
+                    stockPrice = message.stocks[message.currDayIndex].cost;
 
                     document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
                     document.getElementById("currentDate").innerHTML = "Current Day: " + message.stocks[message.currDayIndex].date;
@@ -497,6 +518,9 @@
                     }
 
                     var amountInStocks = message.stocksOwned * message.stocks[message.currDayIndex].cost;
+
+                    dayIndex = message.currDayIndex;
+                    stockPrice = message.stocks[message.currDayIndex].cost;
 
                     document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
                     document.getElementById("currentDate").innerHTML = "Current Day: " + message.stocks[message.currDayIndex].date;
@@ -564,8 +588,6 @@
         // Get the modal
         var buyModal = document.getElementById("buyModal");
         var sellModal = document.getElementById("sellModal");
-        //var slider = document.getElementById("myRange");
-        //var textBox = document.getElementById("txtQuantity");
 
         // Get the button that opens the modal
         var btnBuy = document.getElementById("btnBuy");
@@ -580,7 +602,7 @@
         btnBuy.onclick = function() {
             DrawBuyChart();
             buyModal.style.display = "block";
-            
+
         }
         btnSell.onclick = function() {
 
@@ -590,7 +612,7 @@
         btnQuit.onclick = function() {
             quitModal.style.display = "block";
         }
-        
+
 
         // When the user clicks on <span> (x), close the modal
         buyClose.onclick = function() {

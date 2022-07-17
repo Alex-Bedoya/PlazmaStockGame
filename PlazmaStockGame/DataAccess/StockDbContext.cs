@@ -21,7 +21,7 @@ namespace PlazmaStockGame.DataAccess
 
             //@"Server=DESKTOP-B6VT6G1\SQLEXPRESS;Database=PlazmaStockGame;Trusted_Connection=True;"); // alex
 
-            optionsBuilder.UseSqlServer("Server=localhost;Database=master;Trusted_Connection=True;"); //Adam
+            //optionsBuilder.UseSqlServer("Server=localhost;Database=master;Trusted_Connection=True;"); //Adam
         }
     }
 }

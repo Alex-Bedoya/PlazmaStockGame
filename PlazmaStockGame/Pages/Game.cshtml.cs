@@ -200,7 +200,7 @@ namespace PlazmaStockGame.Pages
             CurrMoney = CurrMoney + sellMoney;
 
             //set it to above 7 (the max days you can play the game for)
-            CurrDayIndex = 8;
+            //CurrDayIndex = 8;
 
 
             

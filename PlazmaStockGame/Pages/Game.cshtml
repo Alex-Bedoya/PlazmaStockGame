@@ -74,12 +74,17 @@
                     <label>Welcome to the Game your stock is: @Model.Ticker</label>
                 </div>
             </div>
-            <div class="row">
-                <div class="col">
-                    <h2>Current Amount of money you have: @Model.CurrMoney</h2>
-                </div>
-            </div>
         </div>
+
+        <div class="col-3 float-md-start">
+            <p id="startDate"></p>
+            <p id="currentDate"></p>
+            <p id="currentBal"></p>
+            <p id="stocksOwned"></p>
+            <p id="ownedStocksCost"></p>
+            <p id="stockPrice"></p>
+        </div>
+
         @*options panel*@
         <div class="col-3 float-end">
             <div class="col">
@@ -154,18 +159,21 @@
     </div>
 </div>
 
+<!-- Modal quit content -->
 <div id="quitModal" class="modal">
     <div class="modal-content">
         <span class="close" id="quitClose">&times;</span>
         <div class="col-6 mx-auto">
             <div>
                 <h3 id="finalBalance">Final Money:</h3>
+                <h4 id="finalGainLoss">Final Gain/Loss:</h4>
+                <h4 id="finalDaysPassed">Days Elapsed:</h4>
             </div>
         </div>
     </div>
 </div>
 
-<table>
+@*<table>
     <tr class="table-header">
         <th>Ticker</th>
         <th>Date</th>
@@ -173,7 +181,7 @@
     </tr>
 
     @{
-                                            @*foreach (Stock stck in Model.stocks)
+                                                        @*foreach (Stock stck in Model.stocks)
     {
     <tr class="table-header">
     <th>@stck.Ticker</th>
@@ -181,18 +189,10 @@
     <th>@stck.Cost</th>
     </tr>
 
-    }*@
+    }
 
     }
-</table>
-
-<p id="startDate"></p>
-<p id="currentDate"></p>
-<p id="currentBal"></p>
-<p id="stocksOwned"></p>
-<p id="ownedStocksCost"></p>
-<p id="stockPrice"></p>
-
+</table>*@
 
 
 
@@ -418,7 +418,7 @@
 
                     document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
                     document.getElementById("currentDate").innerHTML = "Current Day: " + message.stocks[message.currDayIndex].date;
-                    document.getElementById("currentBal").innerHTML = "Current Balance: $" + message.currMoney;
+                    document.getElementById("currentBal").innerHTML = "Current Balance: $" + message.currMoney.toFixed(2);
                     document.getElementById("stocksOwned").innerHTML = "Stocks Currently Owned: " + message.stocksOwned;
                     document.getElementById("ownedStocksCost").innerHTML = "Cost of all the stocks you own: " + amountInStocks;
                     document.getElementById("stockPrice").innerHTML = "Stock Price for today: $" + message.stocks[message.currDayIndex].cost;
@@ -459,9 +459,9 @@
 
                     document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
                     document.getElementById("currentDate").innerHTML = "Current Day: " + message.stocks[message.currDayIndex].date;
-                    document.getElementById("currentBal").innerHTML = "Current Balance: $" + message.currMoney;
+                    document.getElementById("currentBal").innerHTML = "Current Balance: $" + message.currMoney.toFixed(2);
                     document.getElementById("stocksOwned").innerHTML = "Stocks Currently Owned: " + message.stocksOwned;
-                    document.getElementById("ownedStocksCost").innerHTML = "Cost of all the stocks you own: " + amountInStocks;
+                    document.getElementById("ownedStocksCost").innerHTML = "Cost of all the stocks you own: " + amountInStocks.toFixed(2);
                     document.getElementById("stockPrice").innerHTML = "Stock Price for today: $" + message.stocks[message.currDayIndex].cost;
                     buyModal.style.display = "none";
                     sellModal.style.display = "none";
@@ -545,7 +545,10 @@
 
 
         function EndGame(msg) {
-            document.getElementById("finalBalance").innerHTML = "Final Balance: $" + msg.currMoney;
+            var gainLoss = msg.currMoney - 10000;
+            document.getElementById("finalBalance").innerHTML = "Final Balance: $" + msg.currMoney.toFixed(2);
+            document.getElementById("finalGainLoss").innerHTML = "Final Gain/Loss: $" + gainLoss.toFixed(2);
+            document.getElementById("finalDaysPassed").innerHTML = "Days Elapsed: " + msg.currDayIndex;
             quitModal.style.display = "block";
         }
 
@@ -599,16 +602,12 @@
         sellClose.onclick = function() {
             sellModal.style.display = "none";
         }
-        quitClose.onclick = function() {
-            quitModal.style.display = "none";
-        }
 
         // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
-            if (event.target == buyModal || event.target == sellModal || event.target == quitModal) {
+            if (event.target == buyModal || event.target == sellModal) {
                 buyModal.style.display = "none";
                 sellModal.style.display = "none";
-                quitModal.style.display = "none";
             }
         }
     </script>

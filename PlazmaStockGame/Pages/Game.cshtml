@@ -551,6 +551,7 @@
             document.getElementById("finalGainLoss").innerHTML = "Final Gain/Loss: $" + gainLoss.toFixed(2);
             document.getElementById("finalDaysPassed").innerHTML = "Days Elapsed: " + msg.currDayIndex;
             quitModal.style.display = "block";
+            sessionStorage.clear();
         }
 
 

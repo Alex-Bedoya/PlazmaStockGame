@@ -145,13 +145,13 @@
                 <div id="sellChart" style="height: 400px"></div>
             </div>
             <div class="row mx-auto">
-                <p>Please enter an amount of stocks you want to buy:</p>
-                <input class="w-25" type="number" id="txtSellQuantity" min="100" max="10000" onchange="updateSliderSell(this.value)">
+                <p>Please enter an amount of stocks you want to sell:</p>
+                <input class="w-25" type="number" id="txtSellQuantity" min="1" max="1000" onchange="updateSliderSell(this.value)">
             </div>
             <div class="row mx-auto">
-                <label for="myRange">Please select an amount of stocks you want to buy</label>
+                <label for="myRange">Please select an amount of stocks you want to sell</label>
                 <div class="slidecontainer">
-                    <input type="range" min="1" max="1000" value="0" class="slider" id="sellRange" onchange="updateTextInputSell(this.value)">
+                    <input type="range" min="1" max="1000" value="0" class="w-75 slider" id="sellRange" onchange="updateTextInputSell(this.value)">
                 </div>
             </div>
             <div class="row mx-auto sidePanel">

@@ -24,6 +24,44 @@
         .float-end {
             font-size: 1.5em;
         }
+
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        /* The Close Button */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: #000;
+                text-decoration: none;
+                cursor: pointer;
+            }
     </style>
 </head>
 
@@ -42,46 +80,78 @@
                 </div>
             </div>
         </div>
-        <!--Buy more page-->
-        <div class="col-6 mx-auto mainPanel">
-            <div class="row mx-auto">
-                <label>Welcome to the Game your stock is: @Model.Ticker</label>
-                <!--Div that will hold the pie chart-->
-                <div id="container" style="height: 400px"></div>
-                <div id="drag"></div>
-                <div id="drop"></div>
-            </div>
-            <div class="row mx-auto">
-                <p>Please enter an amount of stocks you want to buy:</p>
-                <input class="w-25" type="number" id="txtQuantity" name="txtQuantity" min="100" max="10000" onchange="updateSlider(this.value)">
-            </div>
-            <div class="row mx-auto">
-                <label for="myRange">Please select an amount of stocks you want to buy</label>
-                <div class="slidecontainer">
-                    <input type="range" min="1" max="100" value="0" class="slider" id="myRange" onchange="updateTextInput(this.value)">
-                </div>
-            </div>
-            <div class="row mx-auto sidePanel">
-                <div class="col">
-                    <div id="result"></div>
-                    @Html.AntiForgeryToken()
-                    <button id="btnSubmit" class="btn btn-success w-50 mx-auto">Submit</button>
-                </div>
-            </div>
-        </div>
         @*options panel*@
         <div class="col-3 float-end">
             <div class="col">
-                <input type="radio" id="buyRadioBtn" name="Options" value="Buy" />
+                <button id="btnBuy" class="btn btn-success">Buy</button>
+                <button id="btnSell" class="btn btn-primary">Sell</button>
+                <button id="btnHold" class="btn btn-info">Hold</button>
+                @*<input type="radio" id="buyRadioBtn" name="Options" value="Buy" />
                 <label for="buyRadioBtn">Buy</label>
                 <input type="radio" id="sellRadioBtn" name="Options" value="Sell" />
                 <label for="sellRadioBtn">Sell</label>
                 <input type="radio" id="holdRadioBtn" name="Options" value="Hold" />
-                <label for="holdRadioBtn">Hold</label>
+                <label for="holdRadioBtn">Hold</label>*@
             </div>
         </div>
     </div>
 </body>
+
+<!-- Modal buy content -->
+<div id="buyModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="buyClose">&times;</span>
+        <div class="col-6 mx-auto">
+            <div class="row mx-auto">
+                <div id="buyChart" style="height: 400px"></div>
+            </div>
+            <div class="row mx-auto">
+                <p>Please enter an amount of stocks you want to buy:</p>
+                <input class="w-25" type="number" id="txtBuyQuantity" min="100" max="10000" onchange="updateSliderBuy(this.value)">
+            </div>
+            <div class="row mx-auto">
+                <label for="myRange">Please select an amount of stocks you want to buy</label>
+                <div class="slidecontainer">
+                    <input type="range" min="1" max="100" value="0" class="slider" id="buyRange" onchange="updateTextInputBuy(this.value)">
+                </div>
+            </div>
+            <div class="row mx-auto sidePanel">
+                <div class="col">
+                    @Html.AntiForgeryToken()
+                    <button id="btnSubmitBuy" class="btn btn-success w-50 mx-auto">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal sell content -->
+<div id="sellModal" class="modal">
+    <div class="modal-content">
+        <span class="close" id="sellClose">&times;</span>
+        <div class="col-6 mx-auto">
+            <div class="row mx-auto">
+                <div id="sellChart" style="height: 400px"></div>
+            </div>
+            <div class="row mx-auto">
+                <p>Please enter an amount of stocks you want to buy:</p>
+                <input class="w-25" type="number" id="txtSellQuantity" min="100" max="10000" onchange="updateSliderSell(this.value)">
+            </div>
+            <div class="row mx-auto">
+                <label for="myRange">Please select an amount of stocks you want to buy</label>
+                <div class="slidecontainer">
+                    <input type="range" min="1" max="100" value="0" class="slider" id="sellRange" onchange="updateTextInputSell(this.value)">
+                </div>
+            </div>
+            <div class="row mx-auto sidePanel">
+                <div class="col">
+                    @Html.AntiForgeryToken()
+                    <button id="btnSubmitSell" class="btn btn-success w-50 mx-auto">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <table>
     <tr class="table-header">
@@ -91,15 +161,15 @@
     </tr>
 
     @{
-        //foreach (Stock stck in Model.stocks)
-        //{
-        //    <tr class="table-header">
-        //        <th>@stck.Ticker</th>
-        //        <th>@stck.Date.ToString()</th>
-        //        <th>@stck.Cost</th>
-        //    </tr>
+        @*foreach (Stock stck in Model.stocks)
+    {
+    <tr class="table-header">
+    <th>@stck.Ticker</th>
+    <th>@stck.Date.ToString()</th>
+    <th>@stck.Cost</th>
+    </tr>
 
-        //}
+    }*@
 
     }
 </table>
@@ -120,39 +190,110 @@
 @section Scripts
     {
     <script type="text/javascript">
-        function updateTextInput(val) {
-            var purchase = @Model.CurrMoney * (val / 100);
-            document.getElementById('txtQuantity').value = purchase;
-            changeGraphValue(purchase);
-        };
-        function updateSlider(val) {
-            var percent = (val / @Model.CurrMoney) * 100;
-            document.getElementById('myRange').value = percent;
-            changeGraphValue(val);
-        };
-        function changeGraphValue(purchase) {
-            remaining = @Model.CurrMoney - purchase;
-            var data = google.visualization.arrayToDataTable([
-                ['Stock Transaction', 'representation'],
-                ['Funds being used', purchase],
-                ['Funds Remaining', remaining],
-            ]);
 
-            var options = {
-                pieHole: 0.5,
-                pieSliceTextStyle: {
-                    color: 'black',
-                },
-                legend: 'none'
-            };
-            var chart = new google.visualization.PieChart(document.getElementById('donut_single'));
-            chart.draw(data, options);
+        var buyChart;
+        var sellChart;
+
+        function updateTextInputBuy(val) {
+            var update = @Model.CurrMoney * (val / 100);
+            document.getElementById('txtBuyQuantity').value = update;
+            buyChart.series[0].setData([update, (@Model.CurrMoney - update)]);
+        };
+        function updateSliderBuy(val) {
+            var percent = (val / @Model.CurrMoney) * 100;
+            document.getElementById('buyRange').value = percent;
+            buyChart.series[0].setData([parseFloat(val), (@Model.CurrMoney - val)]);
+        };
+
+        function updateTextInputSell(val) {
+            var update = @Model.CurrMoney * (val / 100);
+            document.getElementById('txtSellQuantity').value = update;
+            buyChart.series[0].setData([update, (@Model.CurrMoney - update)]);
+        };
+        function updateSliderSell(val) {
+            var percent = (val / @Model.CurrMoney) * 100;
+            document.getElementById('sellRange').value = percent;
+            buyChart.series[0].setData([parseFloat(val), (@Model.CurrMoney - val)]);
         };
     </script>
 
 
     <script type="text/javascript">
 
+        function DrawBuyChart() {
+            var purchase = 0;
+            var adjustAmount = @Model.CurrMoney;
+            buyChart = new Highcharts.Chart({
+
+                chart: {
+                    renderTo: 'buyChart',
+                    animation: false
+                },
+
+                title: {
+                    text: 'Buy Stock Transaction'
+                },
+
+                xAxis: {
+                    categories: ['Purchase Total', 'Your Available Funds']
+                },
+
+                plotOptions: {
+                    series: {
+                        point: {
+                            events: {
+
+                                drag: function(e) {
+                                    // Returning false stops the drag and drops. Example:
+
+                                    //if (this.series.yData[0] >= @Model.CurrMoney) {
+                                    //    this.y = @Model.CurrMoney;
+                                    //    this.series.yData[0] = @Model.CurrMoney;
+                                    //    return false;
+                                    //}
+
+                                    if (this.category == "Purchase Total") {
+                                        purchase = this.series.yData[0];
+                                        adjustAmount = @Model.CurrMoney - purchase;
+                                    }
+                                    if (this.category == "Your Available Funds") {
+                                        purchase = @Model.CurrMoney - this.series.yData[1];
+                                        adjustAmount = this.series.yData[1];
+                                    }
+                                    //$('#drag').html(
+                                    //    'Dragging <b>' + this.series.name + '</b>, <b>' + this.category + '</b> to <b>' + purchase.toFixed(2) + '</b> adjusted: <b>' + adjustAmount.toFixed(2) + '</b>');
+                                },
+                                drop: function() {
+                                    this.series.setData([purchase, adjustAmount]);
+                                    document.getElementById('txtBuyQuantity').value = purchase.toFixed(2);
+                                    var percent = (purchase / @Model.CurrMoney) * 100;
+                                    document.getElementById('buyRange').value = percent;
+                                }
+                            }
+                        },
+                        stickyTracking: false
+                    },
+                    column: {
+                        stacking: 'normal'
+                    },
+                    line: {
+                        cursor: 'ns-resize'
+                    }
+                },
+
+                tooltip: {
+                    yDecimals: 2
+                },
+
+                series: [{
+                    data: [purchase, adjustAmount - purchase],
+                    draggableY: true,
+                    dragMinY: 0,
+                    type: 'column',
+                    minPointLength: 2
+                }]
+            });
+        };
 
         $("#NextDay").click(function() {
             $.ajax({
@@ -173,38 +314,127 @@
 
         });
 
+        function DrawSellChart() {
+            var purchase = 0;
+            var adjustAmount = @Model.CurrMoney; // put total stock value here
+            buyChart = new Highcharts.Chart({
+
+                chart: {
+                    renderTo: 'sellChart',
+                    animation: false
+                },
+
+                title: {
+                    text: 'Sell Stock Transaction'
+                },
+
+                xAxis: {
+                    categories: ['Sell Amount Details', 'Your Stocks Remaining Value']
+                },
+
+                plotOptions: {
+                    series: {
+                        point: {
+                            events: {
+
+                                drag: function(e) {
+                                    // Returning false stops the drag and drops. Example:
+
+                                    //if (this.series.yData[0] >= @Model.CurrMoney) {
+                                    //    this.y = @Model.CurrMoney;
+                                    //    this.series.yData[0] = @Model.CurrMoney;
+                                    //    return false;
+                                    //}
+
+                                    if (this.category == "Sell Amount Details") {
+                                        purchase = this.series.yData[0];
+                                        adjustAmount = @Model.CurrMoney - purchase;
+                                    }
+                                    if (this.category == "Your Stocks Remaining Value") {
+                                        purchase = @Model.CurrMoney - this.series.yData[1]; // this will also be based off of stock value
+                                        adjustAmount = this.series.yData[1];
+                                    }
+                                    //$('#drag').html(
+                                    //    'Dragging <b>' + this.series.name + '</b>, <b>' + this.category + '</b> to <b>' + purchase.toFixed(2) + '</b> adjusted: <b>' + adjustAmount.toFixed(2) + '</b>');
+                                },
+                                drop: function() {
+                                    this.series.setData([purchase, adjustAmount]);
+                                    document.getElementById('txtSellQuantity').value = purchase.toFixed(2);
+                                    var percent = (purchase / @Model.CurrMoney) * 100;
+                                    document.getElementById('sellRange').value = percent;
+                                }
+                            }
+                        },
+                        stickyTracking: false
+                    },
+                    column: {
+                        stacking: 'normal'
+                    },
+                    line: {
+                        cursor: 'ns-resize'
+                    }
+                },
+
+                tooltip: {
+                    yDecimals: 2
+                },
+
+                series: [{
+                    data: [purchase, adjustAmount - purchase],
+                    draggableY: true,
+                    dragMinY: 0,
+                    type: 'column',
+                    minPointLength: 2
+                }]
+            });
+        };
+
+        $("#NextDay").click(function() {
+            $.ajax({
+                type: "POST",
+                url: "/Game?handler=NextDay",
+
+                contentType: 'application/x-www-form-urlencoded',
+                dataType: "json",
+                headers:
+                {
+                    "RequestVerificationToken": $('input:hidden[name="__RequestVerificationToken"]').val()
+                },
+                success: function(message) {
+                    document.getElementById("result").innerHTML = message;
+
+                }
+            });
+
+        });
+
         $("#btnSubmit").click(function() {
 
             // ***************** Radio Button Logic Placeholder ******************************
-            if (document.getElementById("buyRadioBtn").checked) 
-            {
+            if (document.getElementById("buyRadioBtn").checked) {
                 document.getElementById("result").innerHTML = "Buy";
                 var option = 0;
-            } 
-            else if (document.getElementById("sellRadioBtn").checked) 
-            {
+            }
+            else if (document.getElementById("sellRadioBtn").checked) {
                 document.getElementById("result").innerHTML = "Sell";
                 var option = 1;
-            } 
-            else if (document.getElementById("holdRadioBtn").checked) 
-            {
+            }
+            else if (document.getElementById("holdRadioBtn").checked) {
                 document.getElementById("result").innerHTML = "Hold";
                 var option = 2;
-            } 
+            }
             else {
                 alert("You must select an Option");
                 return;
             }
 
 
-            //var amount = document.getElementById('txtQuantity').value;
-            // check witch radio button was clicked here and run a different ajax method for each one.
             var test = "test";
             var amount = document.getElementById("myRange").value;
             $.ajax({
                 type: "POST",
                 url: "/Game?handler=Purchase",
-                data: { "amount": amount, "option":option },
+                data: { "amount": amount, "option": option },
                 contentType: 'application/x-www-form-urlencoded',
                 dataType: "json",
                 headers:
@@ -213,8 +443,13 @@
                 },
                 success: function(message) {
 
+                    if (message.errorMessage) {
+                        alert(message.errorMessage);
+                        return;
+                    }
+
                     var amountInStocks = message.stocksOwned * message.stocks[message.currDayIndex].cost;
-                    
+
                     document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
                     document.getElementById("currentDate").innerHTML = "Current Day: " + message.stocks[message.currDayIndex].date;
                     document.getElementById("currentBal").innerHTML = "Current Balance: $" + message.currMoney;
@@ -222,149 +457,53 @@
                     document.getElementById("ownedStocksCost").innerHTML = "Cost of all the stocks you own: " + amountInStocks;
                     document.getElementById("stockPrice").innerHTML = "Stock Price for today: $" + message.stocks[message.currDayIndex].cost;
 
-                    //var obj = JSON.parse(message);
-                    //document.getElementById("result").innerHTML = obj.currMoney;
-                    //alert(JSON.stringify(message.currMoney));
-
-                    //alert(JSON.stringify(message.stocks));
-
-                   
                 }
             });
         });
 
     </script>
+    <script>
+        // Get the modal
+        var buyModal = document.getElementById("buyModal");
+        var sellModal = document.getElementById("sellModal");
+        //var slider = document.getElementById("myRange");
+        //var textBox = document.getElementById("txtQuantity");
 
-    <script type="text/javascript">
-        initialDraw();
-        function initialDraw() {
-            var purchase = 0;
-            var adjustAmount = @Model.CurrMoney;
-            var chart = new Highcharts.Chart({
+        // Get the button that opens the modal
+        var btnBuy = document.getElementById("btnBuy");
+        var btnSell = document.getElementById("btnSell");
+        //var btnHold = document.getElementById("btnHold");
 
-                chart: {
-                    renderTo: 'container',
-                    animation: true
-                },
+        // Get the <span> element that closes the modal
+        var buyClose = document.getElementById("buyClose");
+        var sellClose = document.getElementById("sellClose");
 
-                title: {
-                    text: 'Transaction Details'
-                },
+        // When the user clicks the button, open the modal
+        btnBuy.onclick = function() {
+            DrawBuyChart();
+            buyModal.style.display = "block";
+        }
+        btnSell.onclick = function() {
 
-                xAxis: {
-                    categories: ['Transaction Amount', 'Adjusted Funds']
-                },
+            DrawSellChart();
+            sellModal.style.display = "block";
+        }
 
-                plotOptions: {
-                    series: {
-                        point: {
-                            events: {
+        // When the user clicks on <span> (x), close the modal
+        buyClose.onclick = function() {
+            buyModal.style.display = "none";
+        }
+        sellClose.onclick = function() {
+            sellModal.style.display = "none";
+        }
 
-                                drag: function(e) {
-                                    // Returning false stops the drag and drops. Example:
-                                    /*
-                                    if (e.newY > 300) {
-                                        this.y = 300;
-                                        return false;
-                                    }
-                                    */
-
-
-                                    purchase = Highcharts.numberFormat(e.y, 2);
-                                    adjustAmount = @Model.CurrMoney - purchase;
-                                    refreshDraw(adjustAmount, purchase);
-                                    $('#drag').html(
-                                        'Dragging <b>' + this.series.name + '</b>, <b>' + this.category + '</b> to <b>' + purchase + '</b>');
-                                },
-                                drop: function() {
-                                    purchase = Highcharts.numberFormat(this.y, 2);
-                                    adjustAmount = @Model.CurrMoney - purchase;
-                                    refreshDraw(adjustAmount, purchase);
-                                }
-                            }
-                        },
-                        stickyTracking: false
-                    },
-                },
-
-                tooltip: {
-                    yDecimals: 2
-                },
-
-                series: [{
-                    data: [adjustAmount, purchase],
-                    //draggableX: true,
-                    draggableY: true,
-                    dragMinY: 0,
-                    type: 'column',
-                    minPointLength: 2
-                }]
-
-            });
-        };
-        function refreshDraw(adjustAmount, purchase) {
-            var chart = new Highcharts.Chart({
-
-                chart: {
-                    renderTo: 'container',
-                    animation: true
-                },
-
-                title: {
-                    text: 'Transaction Details'
-                },
-
-                xAxis: {
-                    categories: ['Transaction Amount', 'Adjusted Funds']
-                },
-
-                plotOptions: {
-                    series: {
-                        point: {
-                            events: {
-
-                                drag: function(e) {
-                                    // Returning false stops the drag and drops. Example:
-                                    /*
-                                    if (e.newY > 300) {
-                                        this.y = 300;
-                                        return false;
-                                    }
-                                    */
-
-
-                                    purchase = Highcharts.numberFormat(e.y, 2);
-                                    adjustAmount = @Model.CurrMoney - purchase;
-                                    refreshDraw(adjustAmount, purchase);
-                                    $('#drag').html(
-                                        'Dragging <b>' + this.series.name + '</b>, <b>' + this.category + '</b> to <b>' + purchase + '</b>');
-                                },
-                                drop: function() {
-                                    purchase = Highcharts.numberFormat(this.y, 2);
-                                    adjustAmount = @Model.CurrMoney - purchase;
-                                    refreshDraw(adjustAmount, purchase);
-                                }
-                            }
-                        },
-                        stickyTracking: false
-                    },
-                },
-
-                tooltip: {
-                    yDecimals: 2
-                },
-
-                series: [{
-                    data: [adjustAmount, purchase],
-                    //draggableX: true,
-                    draggableY: true,
-                    dragMinY: 0,
-                    type: 'column',
-                    minPointLength: 2
-                }]
-
-            });
-        };
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == buyModal || event.target == sellModal) {
+                buyModal.style.display = "none";
+                sellModal.style.display = "none";
+            }
+        }
     </script>
 
 }

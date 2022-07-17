@@ -19,6 +19,8 @@ namespace PlazmaStockGame.Pages
 
         public int StocksOwned { get; set; }
 
+        public string ErrorMessage { get; set; }
+
 
 
 
@@ -100,6 +102,8 @@ namespace PlazmaStockGame.Pages
             else
             {
                 //you don't have enough money to buy stocks
+                ErrorMessage = "Error: You don't have enough money to buy that many stocks";
+                return;
             }
 
             if (CurrDayIndex >= 7)
@@ -139,7 +143,9 @@ namespace PlazmaStockGame.Pages
             else
             {
                 //error, you don't have that many stocks to sell
-                
+                ErrorMessage = "Error: You don't own that many stocks to sell";
+                return;
+
             }
 
             if (CurrDayIndex >= 7)
@@ -235,7 +241,7 @@ namespace PlazmaStockGame.Pages
 
 
 
-            DataPackage data = new DataPackage(CurrMoney, stocks, CurrDayIndex, StocksOwned);
+            DataPackage data = new DataPackage(CurrMoney, stocks, CurrDayIndex, StocksOwned, ErrorMessage);
             JsonResult json = new JsonResult(data);
             return json;
         }
@@ -256,12 +262,15 @@ namespace PlazmaStockGame.Pages
 
         public int StocksOwned { get; set; }
 
-        public DataPackage( double currMoney,  List<Stock> stocks, int currDayIndex, int stocksOwned)
+        public string ErrorMessage { get; set; }
+
+        public DataPackage( double currMoney, List<Stock> stocks, int currDayIndex, int stocksOwned, string errorMessage)
         {
             CurrMoney = currMoney;
             this.stocks = stocks;
             CurrDayIndex = currDayIndex;
             StocksOwned = stocksOwned;
+            ErrorMessage = errorMessage;
         }
     }
 

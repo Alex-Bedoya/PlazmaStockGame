@@ -30,6 +30,8 @@ namespace PlazmaStockGame.Pages
 
             if (!ModelState.IsValid) { return Page(); }
 
+            Ticker = Ticker.ToUpper();
+
             if (!stocks.Contains(Ticker))
             {
                 ViewData["Ticker"] = string.Format("Ticker {0}, does not exist", Ticker);

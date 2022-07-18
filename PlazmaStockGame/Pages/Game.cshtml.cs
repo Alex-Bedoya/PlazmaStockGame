@@ -198,21 +198,9 @@ namespace PlazmaStockGame.Pages
             }
 
             CurrMoney = CurrMoney + sellMoney;
-
-            //set it to above 7 (the max days you can play the game for)
-            //CurrDayIndex = 8;
-
-
-            
+                        
             PushData();
-
-
-            //do thing to quit the game and show the results
-            //...
         }
-
-
-
 
 
 
@@ -242,12 +230,10 @@ namespace PlazmaStockGame.Pages
             }
 
 
-
             DataPackage data = new DataPackage(CurrMoney, stocks, CurrDayIndex, StocksOwned, ErrorMessage, IsGameOver);
             JsonResult json = new JsonResult(data);
             return json;
         }
-
     }
 
 

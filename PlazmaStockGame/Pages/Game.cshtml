@@ -2,7 +2,7 @@
 @model PlazmaStockGame.Pages.GameModel
 @using PlazmaStockGame.Models
 @{
-
+    
 }
 <head>
     <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -81,13 +81,13 @@
         </div>
 
         <div class="col-3 float-md-start">
-            <p id="startDate"></p>
-            <p id="currentDate"></p>
-            <p id="elaspedDays"></p>
-            <p id="currentBal"></p>
-            <p id="stocksOwned"></p>
-            <p id="ownedStocksCost"></p>
-            <p id="stockPrice"></p>
+            <p id="startDate">Starting Day: @Model.stocks[0].Date </p>
+            <p id="currentDate">Current Day: @Model.stocks[@Model.CurrDayIndex].Date </p>
+            <p id="elaspedDays">Days Elapsed: @Model.CurrDayIndex  </p>
+            <p id="currentBal">Current Balance: $10000 </p>
+            <p id="stocksOwned">Stocks Currently Owned: @Model.StocksOwned </p>
+            <p id="ownedStocksCost">Cost of all the stocks you own: $0 </p>
+            <p id="stockPrice">Stock Price for today: $@Model.stocks[@Model.CurrDayIndex].Cost </p>
         </div>
 
         @*options panel*@
@@ -446,12 +446,12 @@
                     dayIndex = message.currDayIndex;
                     stockPrice = message.stocks[message.currDayIndex].cost;
 
-                    document.getElementById("startDate").innerHTML = "Starting Day Day: " + message.stocks[0].date;
+                    document.getElementById("startDate").innerHTML = "Starting Day: " + message.stocks[0].date;
                     document.getElementById("currentDate").innerHTML = "Current Day: " + message.stocks[message.currDayIndex].date;
                     document.getElementById("elaspedDays").innerHTML = "Days Elasped: " + message.currDayIndex;
                     document.getElementById("currentBal").innerHTML = "Current Balance: $" + message.currMoney.toFixed(2);
                     document.getElementById("stocksOwned").innerHTML = "Stocks Currently Owned: " + message.stocksOwned;
-                    document.getElementById("ownedStocksCost").innerHTML = "Cost of all the stocks you own: " + amountInStocks.toFixed(2);
+                    document.getElementById("ownedStocksCost").innerHTML = "Cost of all the stocks you own: $" + amountInStocks.toFixed(2);
                     document.getElementById("stockPrice").innerHTML = "Stock Price for today: $" + message.stocks[message.currDayIndex].cost;
                     buyModal.style.display = "none";
                     sellModal.style.display = "none";

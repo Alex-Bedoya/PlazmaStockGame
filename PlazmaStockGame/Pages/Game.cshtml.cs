@@ -237,6 +237,7 @@ namespace PlazmaStockGame.Pages
             }
             else if (option == 3)
             {
+                //if they quit or the game ends after 7 days
                 Quit();
             }
 
